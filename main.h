@@ -1,61 +1,55 @@
 #ifndef __main_h_
 #define __main_h_
 
-#ifndef FORMATNYC
-#define FORMATNYC 0
-#endif
-
 #ifndef FORMATCHI
 #define FORMATCHI 0
 #endif
 
+#ifndef FORMATNYC
+#define FORMATNYC 0
+#endif
+
+
 #if FORMATNYC && FORMATCHI
 #error "Both FORMATNYC and FORMATCHI cannot be set to 1 simultaneously."
 #elif !FORMATNYC && !FORMATCHI
-// At least one of FORMATNYC or FORMATCHI must be set to 1.
+#error "At least one of FORMATNYC or FORMATCHI must be set to 1."
 #endif
 
 #if FORMATNYC
 #define FORMAT_TICKETS_NYC \
-    plate, \
+    plateNumber, \
     issueDate, \
     infractionId, \
     fineAmount, \
     issuingAgency
 
-#define FORMAT_INFRACTIONS_NYC \
-    infractionId, \
-    description
-
 enum NYC_TICKETS {
     FORMAT_TICKETS_NYC
 };
 
-enum NYC_INFRACTIONS {
-    FORMAT_INFRACTIONS_NYC
-};
 
 #elif FORMATCHI
 #define FORMAT_TICKETS_CHI \
     issueDate, \
-    plate, \
+    plateNumber, \
     issuingAgency, \
     infractionId, \
     fineAmount
-
-#define FORMAT_INFRACTIONS_CHI \
-    infractionId, \
-    description
 
 enum CHI_TICKETS {
     FORMAT_TICKETS_CHI
 };
 
-enum CHI_INFRACTIONS {
-    FORMAT_INFRACTIONS_CHI
-};
-
 #endif
+
+#define FORMAT_INFRACTIONS \
+    infractionIdA, \
+    description
+
+enum INFRACTIONS {
+    FORMAT_INFRACTIONS
+};
 
 #define TICKETS_FILE 1
 #define INFRACTIONS_FILE 2
