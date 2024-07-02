@@ -187,3 +187,65 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+
+// @brief Reads infraction's file and inserts the data into the CDT. 
+// @param fileToRead File to read
+void readInfractions(const char *fileToRead) {
+
+    FILE *file = fopen(fileToRead, "r");
+    
+    if (file == NULL) {
+        perror("Error al abrir el archivo");
+        return;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    char *token;
+    int lineCount = 0,columnCount = 0, found = false, idColumn, descriptionColumn;
+    char * descrition, *id;
+
+    while (fgets(line, sizeof(line), file)) {
+
+        token = strtok(line, ";");
+
+        if(lineCount == 0){
+
+            while(token != NULL && !found) {
+                
+                if(strcmp(token, "id") == 0){
+                    idColumn = lineCount;
+                } 
+                else if(strcmp(token, "description")== 0){
+                    descriptionColumn = lineCount;
+                    found = true;
+                    lineCount++;
+                }
+
+                token = strtok(NULL, ";");
+            }
+        }
+        
+        while (token != NULL) {
+            if (columnCount == idColumn) {
+                id = malloc(strlen(token) + 1);
+                if (id == NULL) {
+                    perror("Failed to allocate memory for plate");
+                    exit(EXIT_FAILURE);
+                }
+                strcpy(id, token);
+            } else if (columnCount == descriptionColumn) {
+                descrition = malloc(strlen(token) + 1);
+                if (descrition == NULL) {
+                    perror("Failed to allocate memory for descrition");
+                    exit(EXIT_FAILURE);
+                }
+                strcpy(descrition, token);
+            }
+            token = strtok(NULL, ";");
+            columnCount++;
+        }        
+    }
+
+    fclose(file);
+}
