@@ -9,6 +9,12 @@
 #define FORMATCHI 0
 #endif
 
+#if FORMATNYC && FORMATCHI
+#error "Both FORMATNYC and FORMATCHI cannot be set to 1 simultaneously."
+#elif !FORMATNYC && !FORMATCHI
+// At least one of FORMATNYC or FORMATCHI must be set to 1.
+#endif
+
 #if FORMATNYC
 #define FORMAT_TICKETS_NYC \
     plate, \
@@ -54,6 +60,8 @@ enum CHI_INFRACTIONS {
 #define TICKETS_FILE 1
 #define INFRACTIONS_FILE 2
 #define DELIM ";"
+#define READ "r"
+#define WRITE "w"
 
 #endif
 
