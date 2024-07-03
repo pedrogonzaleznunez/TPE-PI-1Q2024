@@ -26,7 +26,12 @@ Query3ADT newQuery3(){
     return calloc(1,sizeof(Query3CDT));
 }
 
-void addPlate(Query3ADT query3,){}
+void addPlate(Query3ADT query,char * nameOfInfraction,char * plate){
+    TListInfraction aux = findPerson(query->first, nameOfInfraction);
+    if ( aux != NULL) {
+        aux->plates = addPlateRec(aux->plates,nameOfInfraction);
+    }
+}
 
 static TListInfraction addInfractionRec(TListInfraction first, char * name){
     int car;
