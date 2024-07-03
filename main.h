@@ -53,8 +53,8 @@ enum INFRACTIONS {
 #define TICKETS_FILE 1
 #define INFRACTIONS_FILE 2
 #define DELIM ";"
-#define READ "r"
-#define WRITE "w"
+#define READ "rt"
+#define WRITE "wt"
 
 #endif
 
