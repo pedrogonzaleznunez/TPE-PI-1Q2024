@@ -4,10 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "queries.h"
 #include "main.h"
 
+
 #if FORMATNYC
-#define NYC_INFRACTIONS
+    #define NYC_INFRACTIONS
     #define NYC_TICKETS
 
 #elif FORMATCHI
@@ -21,8 +23,8 @@
 #define FORMAT_ERROR 1
 #define OPENING_FILE_ERROR 2
 
-void readInfractionsFile(char const argv[]);
-void readTicketsFile(char const argv[]);
+void readInfractionsFile(char const argv[], Query1ADT query1);
+void readTicketsFile(char const argv[], Query1ADT query1, Query2ADT query2, Query3ADT query3);
 
 // @brief Main function
 // @param argc Number of files
@@ -35,13 +37,24 @@ int main(int argc, char const *argv[]){
         exit(FORMAT_ERROR);
     }
 
-    readInfractionsFile(argv[INFRACTIONS_FILE]);
-    readTicketsFile(argv[TICKETS_FILE]);
+    //Create CDTs
+    Query1ADT query1 = newQuery1();
+    Query2ADT query2 = newQuery2();
+    Query3ADT query3 = newQuery3();
+
+    //Read files
+    readInfractionsFile(argv[INFRACTIONS_FILE], query1);
+    readTicketsFile(argv[TICKETS_FILE], query1, query2, query3);
+
+    //Front
+
+    //Free resources
+
 }   
 
 // @brief Reads infraction's file and inserts the data into the CDT. 
 // @param fileToRead File to read
-void readInfractionsFile(char const argv[]) {
+void readInfractionsFile(char const argv[], Query1ADT query1){
 
     //check if the main.h file is correctly formatted
     if ((FORMATCHI == 1 && FORMATNYC == 1)||(FORMATCHI == 0 && FORMATNYC == 0)){
@@ -84,16 +97,14 @@ void readInfractionsFile(char const argv[]) {
         }
 
         //insert data into the CDT
-
-        // --> functions to insert data into the CDT
-
+        addInfractionQ1(query1,descrip,atoi(id));
         lineCounter++;
     }
     fclose(file);
     return;
 }
 
-void readTicketsFile(char const argv[]){
+void readTicketsFile(char const argv[], Query1ADT query1, Query2ADT query2, Query3ADT query3){
     //check if the main.h file is correctly formatted
     if ((FORMATCHI == 1 && FORMATNYC == 1)||(FORMATCHI == 0 && FORMATNYC == 0)){
         perror("[ERROR] Compilation error \n");
@@ -138,8 +149,7 @@ void readTicketsFile(char const argv[]){
         }
 
         //insert data into the CDT
-
-        // --> functions to insert data into the CDT
+        addTicketsQ1(query1, atoi(id));
 
         lineCounter++;
     }

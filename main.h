@@ -1,5 +1,5 @@
-#ifndef __main_h_
-#define __main_h_
+#ifndef __MAIN_H_
+#define __MAIN_H_
 
 #ifndef FORMATCHI
 #define FORMATCHI 0
@@ -8,7 +8,6 @@
 #ifndef FORMATNYC
 #define FORMATNYC 0
 #endif
-
 
 #if FORMATNYC && FORMATCHI
 #error "Both FORMATNYC and FORMATCHI cannot be set to 1 simultaneously."

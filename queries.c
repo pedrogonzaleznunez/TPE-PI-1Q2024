@@ -1,9 +1,9 @@
+#include "queries.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-#include "queries.h"
 
 #define MAX_LINE_LENGTH 1024
 #define TRUE 1
@@ -20,7 +20,7 @@ typedef struct infractions1{
 
 typedef struct Query1CDT{
     TInfractions1 * infractionsVec; 
-    size_t dim; 
+    size_t dim;
 }Query1CDT;
 
 // ------------------------------------------------------------- //
@@ -34,8 +34,6 @@ typedef struct agencies{
     size_t mostPopularID;               // ID of most issued infraction of agency agencyName
     struct agencies * tail;             //next agency
 }TAgencies;
-
-typedef struct agencies * TListAgency;
 
 typedef struct Query2CDT{
     TListAgency first;                    //list of agencies
@@ -72,38 +70,49 @@ typedef struct Query3CDT{
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
 
-Query1ADT newQuery1(){
+int getDim(Query1ADT query1){
+    return query1->dim;
+}
+
+Query1ADT newQuery1(void){
     return calloc(1, sizeof(Query1CDT));
 }
 
-void addInfractionQ1(Query1ADT query1, char * infraction, char * id){
+void addInfractionQ1(Query1ADT query1, char * infraction, size_t id){
 
-    //cast id to int 
-    int idInt = atoi(id);
-
-    if(query1->dim <= idInt){
-        query1->infractionsVec = realloc(query1->infractionsVec,sizeof(TInfractions1) * (idInt));
+    if(query1->dim <= id){
+        query1->infractionsVec = realloc(query1->infractionsVec,sizeof(TInfractions1) * (id));
 
         if(query1->infractionsVec == NULL){
             perror("Failed to allocate memory for new list");
             exit(EXIT_FAILURE);
         }
 
-        for(int i = query1->dim; i <= idInt ;i++ ){
+        for(int i = query1->dim; i <= id ;i++ ){
             query1->infractionsVec[i].count = 0;
             query1->infractionsVec[i].infraction = NULL;
         }
 
-        query1->dim = idInt + 1;
+        query1->dim = id + 1;
     }
 
-    query1->infractionsVec[idInt-1].infraction = malloc(strlen(infraction) + 1);
-    strcpy(query1->infractionsVec[idInt-1].infraction,infraction);
+    query1->infractionsVec[id-1].infraction = malloc(strlen(infraction) + 1);
+    strcpy(query1->infractionsVec[id-1].infraction,infraction);
 
     return;
 }
 
+void addTicketsQ1(Query1ADT query1, size_t id){
+    if(id >= query1->dim){
+        return;
+        //CONTROL DE ERROR
+    }
+    query1->infractionsVec[id].count++;
+    return;
+}
+
 void freeQuery1(Query1ADT query1){
+    free(query1->infractionsVec);
     free(query1);
 }
 
@@ -222,33 +231,79 @@ void addAgency(Query2ADT query, char * nameOfAgency, size_t infractionID) {
 
 // implementation of functions for query3
 
-Query3ADT newQuery3(){
+Query3ADT newQuery3(void){
     return calloc(1,sizeof(Query3CDT));
 }
 
 static TListInfraction findInfraction(TListInfraction first, const char * name) {
-    TListInfraction aux = first;
-    while ( aux != NULL) {
-        int c = strcmp(aux->infractionName, name);
+    TListInfraction auxF = first;
+    while ( auxF != NULL) {
+        int c = strcmp(auxF->infractionName, name);
         if ( c == 0) {
-            return aux;
+            return auxF;
         }
-        if ( c > 0)
+        if ( c > 0){
             return NULL;
-        aux = aux->tail;
+        }
+        auxF = auxF->tail;
     }
     return NULL;
 }
 
+static char * copyStr(char * s){
+    errno = 0;
+    char * auxS= malloc(strlen(s)+1);
+    if ( auxS==NULL || errno == ENOMEM) {
+        return NULL;
+    }
+    return strcpy(auxS,s);
+}
+
+static TListPlates addPlate3Rec(TListPlates plates, TListInfraction listAux,char * plate){
+    //insert elem con count++
+    int name;
+    TListPlates auxP;
+    if(plates == NULL || (name=strcmp(plate,plates->nameOfPlate)) > 0){
+        auxP=malloc(sizeof(TPlates));
+        if(auxP == NULL){//control de errores
+            free(auxP);
+        }
+        auxP->nameOfPlate=malloc(sizeof(char) * (strlen(plate) + 1));
+        if(auxP->nameOfPlate == NULL){
+            free(auxP->nameOfPlate);//control de errores
+        }
+        strcpy(auxP->nameOfPlate,plate);
+        auxP->countOfTickets=1;
+    }
+    if(name < 0){
+        auxP->tail=addPlate3Rec(plates->tail,auxP,plate);
+        return auxP;
+    }
+
+    if( name == 0){// si la patente ya estaba, le sumo una ocurrencia de la multa
+        plates->countOfTickets++;
+        if(plates->countOfTickets > listAux->issuingsOfInfraction){
+            listAux->issuingsOfInfraction=plates->countOfTickets;
+            listAux->mostPopularPlateName=copyString(plate);
+        }else if(plates->countOfTickets == listAux->issuingsOfInfraction){//si son iguales, desempato alfabeticamente
+                if(strcmp(listAux->mostPopularPlateName, plate) > 0){
+                    listAux->mostPopularPlateName=copyString(plate);
+                }
+        }
+    }
+    
+    return plates;
+}
+
 void addPlate(Query3ADT query,char * nameOfInfraction,char * plate){
-    TListInfraction aux = findInfraction(query->first, nameOfInfraction);
-    if ( aux != NULL) {
-        aux->plates = addPlateRec(aux->plates,nameOfInfraction);
+    TListInfraction auxFind = findInfraction(query->first, nameOfInfraction);
+    if ( auxFind != NULL) {
+        auxFind->plates = addPlate3Rec(auxFind->plates,auxFind,plate);
     }
 }
 
 
-static TListInfraction addInfractionRec(TListInfraction first, char * name){
+static TListInfraction addInfraction3Rec(TListInfraction first, char * name){
     int car;
     if ( first == NULL || ( car = strcmp(first->infractionName, name)) > 0) {
         errno = 0;
@@ -268,7 +323,7 @@ static TListInfraction addInfractionRec(TListInfraction first, char * name){
         return aux;
     }
     if ( car < 0){
-        first->tail = addInfractionRec(first->tail, name);
+        first->tail = addInfraction3Rec(first->tail, name);
     }
     return first;
 }
@@ -276,3 +331,4 @@ static TListInfraction addInfractionRec(TListInfraction first, char * name){
 void addInfraction3(Query3ADT query, char * nameOfInfraction) {
     query->first= addInfractionRec(query->first, nameOfInfraction);
 }
+

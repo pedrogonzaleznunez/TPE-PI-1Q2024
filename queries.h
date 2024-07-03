@@ -1,3 +1,7 @@
+#ifndef __QUERIES_H_
+#define __QUERIES_H_
+#include <stdlib.h>
+
 // ------------------------------------------------------------- //
 // ------------------- STRUCTURE FOR QUERIES ------------------- //
 // ------------------------------------------------------------- //
@@ -9,11 +13,12 @@ typedef struct Query3CDT * Query3ADT;
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
+int getDim(Query1ADT query1);
+Query1ADT newQuery1(void);
 
-Query1ADT newQuery1();
+void addInfractionQ1(Query1ADT query1, char * infraction, size_t id);
 
-
-void addInfractionQ1(Query1ADT query1, char * infraction, char * id);
+void addTicketsQ1(Query1ADT query1, size_t id);
 
 /**
 * @brief releases resources used by the Query1 ADT
@@ -25,7 +30,9 @@ void freeQuery1(Query1ADT query1);
 // ------------------- FUNCTIONS FOR QUERY 2 ------------------- //
 // ------------------------------------------------------------- //
 
-Query2ADT newQuery2();
+typedef struct agencies * TListAgency;
+
+Query2ADT newQuery2(void);
 
 void addAgency(Query2ADT query, char * nameOfAgency,size_t infractionID);
 
@@ -42,11 +49,11 @@ void freeQuery2(Query2ADT query2);
 // ------------------------------------------------------------- //
 
 
-Query3ADT newQuery3();
+Query3ADT newQuery3(void);
 
 void addInfractionQ3(Query3ADT query, char * nameOfInfraction);
 
-void addPlate();
+void addPlate(Query3ADT query,char * nameOfInfraction,char * plate);
 
 /**
 * @brief releases resources used by the Query3ADT
@@ -60,3 +67,5 @@ void freeQuery3(Query3ADT query3);
 
 // pending function, if not succesful, we will save the names of mostPopularID
 char * fetchName( size_t id);
+
+#endif
