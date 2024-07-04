@@ -8,11 +8,11 @@ FORMATCHI = -DFORMATCHI=1
 
 all: $(OUTPUT_FILE_NYC) $(OUTPUT_FILE_CHI)
 
-$(OUTPUT_FILE_NYC): mainNYC.o queries.o
-	$(COMPILER) $(CFLAGS) mainNYC.o queries.o -o $(OUTPUT_FILE_NYC)
+$(OUTPUT_FILE_NYC): mainNYC.o queriesNYC.o
+	$(COMPILER) $(CFLAGS) mainNYC.o queriesNYC.o -o $(OUTPUT_FILE_NYC)
 
-$(OUTPUT_FILE_CHI): mainCHI.o queries.o
-	$(COMPILER) $(CFLAGS) mainCHI.o queries.o -o $(OUTPUT_FILE_CHI)
+$(OUTPUT_FILE_CHI): mainCHI.o queriesCHI.o
+	$(COMPILER) $(CFLAGS) mainCHI.o queriesCHI.o -o $(OUTPUT_FILE_CHI)
 
 mainNYC.o: $(FRONT)
 	$(COMPILER) $(FORMATNYC) $(CFLAGS) -c $(FRONT) -o mainNYC.o
@@ -20,8 +20,11 @@ mainNYC.o: $(FRONT)
 mainCHI.o: $(FRONT)
 	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c $(FRONT) -o mainCHI.o
 
-queries.o: queries.c queries.h
-	$(COMPILER) $(CFLAGS) -c queries.c -o queries.o
+queriesNYC.o: queries.c queries.h
+	$(COMPILER) $(FORMATNYC) $(CFLAGS) -c queries.c -o queriesNYC.o
+
+queriesCHI.o: queries.c queries.h
+	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c queries.c -o queriesCHI.o
 
 clean:
 	rm -f *.o 
