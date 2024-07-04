@@ -24,7 +24,7 @@
 #define OPENING_FILE_ERROR 2
 
 void readInfractionsFile(char const argv[], Query1ADT query1);
-void readTicketsFile(char const argv[], Query1ADT query1, Query2ADT query2, Query3ADT query3);
+void readTicketsFile(char const argv[], Query1ADT query1);
 
 // @brief Main function
 // @param argc Number of files
@@ -39,13 +39,14 @@ int main(int argc, char const *argv[]){
 
     //Create CDTs
     Query1ADT query1 = newQuery1();
-    Query2ADT query2 = newQuery2();
-    Query3ADT query3 = newQuery3();
+    //Query2ADT query2 = newQuery2();
+    //Query3ADT query3 = newQuery3();
 
     //Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
-    readTicketsFile(argv[TICKETS_FILE], query1, query2, query3);
+    readTicketsFile(argv[TICKETS_FILE], query1);
 
+    
     //Front
 
     //Free resources
@@ -104,7 +105,7 @@ void readInfractionsFile(char const argv[], Query1ADT query1){
     return;
 }
 
-void readTicketsFile(char const argv[], Query1ADT query1, Query2ADT query2, Query3ADT query3){
+void readTicketsFile(char const argv[], Query1ADT query1){
     //check if the main.h file is correctly formatted
     if ((FORMATCHI == 1 && FORMATNYC == 1)||(FORMATCHI == 0 && FORMATNYC == 0)){
         perror("[ERROR] Compilation error \n");
