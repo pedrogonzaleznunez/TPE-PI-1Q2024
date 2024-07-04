@@ -7,7 +7,7 @@ The main objective of this work is to capture everything learned in the subject 
 ## Authors:
 
 - Gonzalez Nuñez, Pedro
-- Laurenza, Carolina Luciana 
+- Laurenza, Carolina Luciana  
 
 
 ### TOfinish 
