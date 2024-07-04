@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]){
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
     readTicketsFile(argv[TICKETS_FILE], query1);
 
-    
+
     //Front
 
     //Free resources
@@ -79,8 +79,8 @@ void readInfractionsFile(char const argv[], Query1ADT query1){
 
     while(fgets(line, MAX_LINE_LENGTH, file) != NULL){
         
+        lineCounter++;
         if(lineCounter == 1){
-            lineCounter++;
             continue;
         }
 

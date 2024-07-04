@@ -73,11 +73,14 @@ typedef struct Query1CDT{
 // ------------------------------------------------------------- //
 
 static int comparator(TInfractions * a, TInfractions * b){
-    int cmp = a->count - b->count;
-    if( cmp==0)
+    int cmp = b->count - a->count;
+    
+    if( cmp==0 )
         cmp = strcmp(a->infractionName,b->infractionName);
     return cmp;
 }
+
+
 
 Query1ADT newQuery1(void){
     return calloc(1, sizeof(Query1CDT));
