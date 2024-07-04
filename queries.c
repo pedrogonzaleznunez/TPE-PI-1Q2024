@@ -69,112 +69,98 @@ typedef struct Query3CDT{
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
-
-int getDim(Query1ADT query1){
-    return query1->dim;
-}
+char * getInfractionName(Query1ADT query, unsigned id);
 
 Query1ADT newQuery1(void){
     return calloc(1, sizeof(Query1CDT));
 }
 
-void addInfractionQ1(Query1ADT query1, char * infraction, size_t id){
+// static int comparator(TInfractions a, TInfractions b){
+//     int cmp=a.count-b.count;
+//     if( cmp==0)
+//         cmp=strcmp(getInfractionName(query1, a.id), getInfractionName(query1, b.id));
+//     return cmp;
+// };
 
-    if(query1->dim <= id){
-        query1->infractionsVec = realloc(query1->infractionsVec,sizeof(TInfractions1) * (id));
+// static void swap( Query1ADT query, size_t n, size_t m){
+// 	TInfractions aux = query->infractionsByOcurrences[n];
+// 	query->infractionsByOcurrences[n] = query->infractionsByOcurrences[m];
+// 	query->infractionsByOcurrences[m] = aux;
+// }
 
-        if(query1->infractionsVec == NULL){
-            perror("Failed to allocate memory for new list");
-            exit(EXIT_FAILURE);
-        }
+static int where( Query1ADT query, unsigned id){
+    for( int i = 0; i < query->dimOcurrences; i++ )
+		if( query->infractionsByOcurrences[i].id == id)
+			return i;
+	return -1;
+}
 
-        for(int i = query1->dim; i <= id ;i++ ){
-            query1->infractionsVec[i].count = 0;
-            query1->infractionsVec[i].infraction = NULL;
-        }
+void addInfractionsOcurrences(Query1ADT query1, unsigned id){
+    if(query1 == NULL)
+        return;
+    
+    int n = where(query1, id);
+    
+    if(where(query1, id) < 0){
+        if(query1->dimOcurrences % BLOCK == 0)
+            query1->infractionsByOcurrences = realloc(query1->infractionsByOcurrences, (query1->dimOcurrences + 1 + BLOCK)*sizeof(TInfractions));
 
-        query1->dim = id + 1;
+        query1->infractionsByOcurrences[query1->dimOcurrences].id = id;
+        query1->infractionsByOcurrences[query1->dimOcurrences].count = 1;
+        query1->dimOcurrences++;
     }
 
-    query1->infractionsVec[id-1].infraction = malloc(strlen(infraction) + 1);
-    strcpy(query1->infractionsVec[id-1].infraction,infraction);
-
+    else{
+        query1->infractionsByOcurrences[n].count++;
+    }
     return;
 }
 
-void addTicketsQ1(Query1ADT query1, size_t id){
-    if(id >= query1->dim){
+void sortInfractionsDecreasing(Query1ADT query1){
+    if(query1 == NULL)
         return;
-        //CONTROL DE ERROR
+    
+    qsort(query1->infractionsByOcurrences, query1->dimOcurrences, sizeof(TInfractions),strcasecmp);
+
+}
+
+// void addInfractionsName(Query1ADT query1, unsigned id, char * infractionName){
+//     if(query1 == NULL)
+//         return;
+//     if(id > query1->dimNames){
+//         query1->infractionsName = realloc(query1->infractionsName, id * sizeof(char *));
+//         for( int i = query1->dimNames; i < id; i++)
+//             query1->infractionsName[i] = NULL;
+//         query1->dimNames = id;
+//     }
+
+//     query1->infractionsName[id-1] = malloc((DESCRIP_INFRAC_LENGHT + 1) * sizeof(char));
+//     //strcpy(query1->infractionsName[id-1], infractionName);
+//     strncpy(query1->infractionsName[id-1], infractionName, DESCRIP_INFRAC_LENGHT);
+//     query1->infractionsName[id-1][DESCRIP_INFRAC_LENGHT] = '\0';
+//     return;
+// }
+
+void printInfractions(Query1ADT query1){
+    if(query1 == NULL)
+        return;
+    for( int i = 0; i < query1->dimOcurrences; i++){
+        if(getInfractionName(query1, query1->infractionsByOcurrences[i].id) == NULL)
+            continue;
+        printf("%s: %ld\n", getInfractionName(query1, query1->infractionsByOcurrences[i].id), query1->infractionsByOcurrences[i].count);
+        puts("");
     }
-    query1->infractionsVec[id].count++;
-    return;
 }
 
 void freeQuery1(Query1ADT query1){
-    free(query1->infractionsVec);
-    free(query1);
-}
-
-
-void readInfractions(const char *fileToRead) {
-
-    FILE *file = fopen(fileToRead, "r");
-    
-    if (file == NULL) {
-        perror("Error al abrir el archivo");
+    if(query1 == NULL)
         return;
+    free(query1->infractionsByOcurrences);
+    for( int i = 0; i < query1->dimNames; i++){
+        free(query1->infractionsName[i]);
     }
-
-    char line[MAX_LINE_LENGTH];
-    char *token;
-    int lineCount = 0,columnCount = 0, found = FALSE, idColumn, descriptionColumn;
-    char * descrition, *id;
-
-    while (fgets(line, sizeof(line), file)) {
-
-        token = strtok(line, ";");
-
-        if(lineCount == 0){
-
-            while(token != NULL && !found) {
-                
-                if(strcmp(token, "id") == 0){
-                    idColumn = lineCount;
-                } 
-                else if(strcmp(token, "description")== 0){
-                    descriptionColumn = lineCount;
-                    found = TRUE;
-                    lineCount++;
-                }
-
-                token = strtok(NULL, ";");
-            }
-        }
-        
-        while (token != NULL) {
-            if (columnCount == idColumn) {
-                id = malloc(strlen(token) + 1);
-                if (id == NULL) {
-                    perror("Failed to allocate memory for plate");
-                    exit(EXIT_FAILURE);
-                }
-                strcpy(id, token);
-            } else if (columnCount == descriptionColumn) {
-                descrition = malloc(strlen(token) + 1);
-                if (descrition == NULL) {
-                    perror("Failed to allocate memory for descrition");
-                    exit(EXIT_FAILURE);
-                }
-                strcpy(descrition, token);
-            }
-            token = strtok(NULL, ";");
-            columnCount++;
-        }        
-    }
-
-    fclose(file);
-}
+    free(query1->infractionsName);
+    free(query1);
 
 void addInfraction2(TListAgency first,size_t infractionID){
     if(infractionID > first->dim){
