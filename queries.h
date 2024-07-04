@@ -39,8 +39,11 @@ Query1ADT newQuery1(void);
 
 void addInfractionsOcurrences(Query1ADT query1, unsigned id);
 
-void addInfractionsName(Query1ADT query1, unsigned id, char * infractionName);
+void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName);
 
+void sortInfractionsDecreasing(Query1ADT query1);
+
+//temporal function
 void printInfractions(Query1ADT query1);
 
 void freeQuery1(Query1ADT query1);

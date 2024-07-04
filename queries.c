@@ -81,7 +81,6 @@ static int comparator(TInfractions * a, TInfractions * b){
 }
 
 
-
 Query1ADT newQuery1(void){
     return calloc(1, sizeof(Query1CDT));
 }
@@ -91,23 +90,16 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
    if(query1 == NULL)
         return;
 
-    if(query1->dim % BLOCK == 0){
-        query1->infractionsVec = realloc(query1->infractionsVec, (query1->dim + BLOCK) * sizeof(TInfractions));
-        //check realloc
-        if(query1->infractionsVec == NULL){
-            return;
-        }
-        query1->dim += BLOCK;
-    }
-    //initialize the struct
-    query1->infractionsVec[id-1].id = id;
-    query1->infractionsVec[id-1].count = 0;
-    query1->infractionsVec[id-1].infractionName = malloc((DESCRIP_INFRAC_LENGHT + 1) * sizeof(char));
-    strncpy(query1->infractionsVec[id-1].infractionName, infractionName, DESCRIP_INFRAC_LENGHT);
-    query1->infractionsVec[id-1].infractionName[DESCRIP_INFRAC_LENGHT] = '\0';
+    query1->infractionsVec = realloc(query1->infractionsVec, (query1->dim + 1) * sizeof(TInfractions));
+    query1->dim++;
+    query1->infractionsVec[query1->dim-1].id = id;
+    query1->infractionsVec[query1->dim-1].count = 0;
+
+    query1->infractionsVec[query1->dim-1].infractionName = malloc((DESCRIP_INFRAC_LENGHT + 1) * sizeof(char));
+    strncpy(query1->infractionsVec[query1->dim-1].infractionName, infractionName, DESCRIP_INFRAC_LENGHT);
+    query1->infractionsVec[query1->dim-1].infractionName[DESCRIP_INFRAC_LENGHT] = '\0';
     return;
 }
-
 
 void addInfractionsOcurrences(Query1ADT query1, unsigned id){
     if(query1 == NULL || id > query1->dim)
@@ -121,8 +113,8 @@ void sortInfractionsDecreasing(Query1ADT query1){
     if(query1 == NULL)
         return;
     
-    qsort(query1->infractionsVec, query1->dim, sizeof(TInfractions),comparator);
-
+    qsort(query1->infractionsVec, query1->dim, sizeof(TInfractions),(int (*)(const void *, const void *))comparator);
+    return;
 }
 
 
