@@ -34,18 +34,24 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
             first->dim=infractionID;
         }
         first->infractions[infractionID].infractionsAmount++;
-if(first->infraccions[infractionID].infraccionName==NULL){
-first->infractions[infractionID].infractionName=malloc(sizeof(char)*(strlen(query1->infractionsVec[infractionID].infractionName)+1));
-strcpy(first->infractions[infractionID].infractionName,query1->infractionsVec[infractionID].infractionName);j
-}
+        if(first->infraccions[infractionID].infraccionName==NULL){
+        first->infractions[infractionID].infractionName=malloc(sizeof(char)*(strlen(query1->infractionsVec[infractionID].infractionName)+1));
+        strcpy(first->infractions[infractionID].infractionName,query1->infractionsVec[infractionID].infractionName);j
+        }
+
         if(first->infractions[infractionID].infractionsAmount >= first->infractions[first->mostPopularID].infractionsAmount){
             if(first->infractions[infractionID].infractionsAmount > first->infractions[first->mostPopularID].infractionsAmount){
                 first->mostPopularID=infractionID;
-return; //actualizo id y nombre
+                    return; //actualizo id y nombre
             }
             if(strcmp(first->infractions[infractionID].infractionName,first->infractions[first->mostPopularID].infractionName) < 0){
+                first->infractions[first->mostPopularID].infractionName= malloc((strlen(first->infractions[infractionID].infractionName)+ 1)* sizeof(char));
+                if(first->infractions[first->mostPopularID].infractionName == NULL){
+                    errno=ENOMEM;
+                    return first;
+                }
                 first->mostPopularID=infractionID;
-return;
+                    return;
             }
            
         }
@@ -81,4 +87,49 @@ static TListAgency addAgencyRec(Query1ADT query1, TListAgency first, char * name
 void addAgency(Query2ADT query, char * nameOfAgency, size_t infractionID){
     query->first= addAgencyRec(query->first, nameOfAgency,infractionID);
     return ;
+}
+//free query2
+
+static void freeRec(TListAgency list){
+    if(list == NULL){
+        return ;
+    }
+    freeRec(list->tail);
+    free(list->infractions);
+    free(list->agencyName);
+    return;
+}
+
+void freeQuery2(Query2ADT query2){
+    freeRec(query2->first);
+    free(query2);
+    return;
+}
+
+//free query 3
+
+
+static void freeSublist(TlistPlates sublist){
+    if(sublist == NULL){
+        return ;
+    }
+    freeSublist(sublist->tail);
+    freeSublist(list->Plates);
+    free(sublist->nameOfPlate);
+    return;
+}
+
+static void freeList(TlistPlates list){
+    if(list == NULL){
+        return ;
+    }
+    freeList(list->tail);
+    freeSublist(list->Plates)
+    free(list->infraccionName);
+    free(list->MostPopularPlate);
+    return;
+}
+
+void freeQuery3(Query3ADT query3){
+    freeList(query3->first);
 }
