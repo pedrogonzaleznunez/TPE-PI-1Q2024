@@ -68,6 +68,30 @@ typedef struct Query1CDT{
 //     TListInfraction first;                    //list of infractions in alphabetic order
 // }Query3CDT;
 
+typedef struct plate{
+    char * nameOfPlate;             //name of plate
+    size_t cantInfraccion;          //amount of tickets issued under plate nameOfPlate
+    struct plate * tail;            //next plate in alphabetical order
+}Tplate;
+
+typedef Tplate * TlistPlates;
+
+typedef struct infraccion{
+    size_t idInfraccion;
+    char * infraccionName;                  //name of the infraction
+    TlistPlates plates;                     //list of plates in alphabetic order
+    char * MostPopularPlate;                //name of most popular issuer of infraction infractionName
+    size_t maxTickets;                      //amount of times that issuer mostPopularPlateName has done infraction infractionName
+    struct infraccion * nextInfraccion;     //next infraction in alphabetical order
+}Tinfraccion;
+
+typedef Tinfraccion * TlistInfraccion;
+
+typedef struct Query3CDT{
+    TlistInfraccion first;            //list of infractions in alphabetic order
+}Query3CDT;
+
+
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
