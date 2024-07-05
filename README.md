@@ -8,7 +8,7 @@ The main objective of this work is to capture everything learned in the subject 
 
 - Gonzalez Nuñez, Pedro
 - Laurenza, Carolina Luciana  
-
+- Lopez Vila, Jerónimo
 
 ### TOfinish 
 
