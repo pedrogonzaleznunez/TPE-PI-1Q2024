@@ -15,15 +15,15 @@ typedef struct infraccion{
     char * infraccionName;
     TlistPlates plates;
     char * MostPopularPlate;
-    size_t maxMultas;
+    size_t maxTickets;
     struct infraccion * nextInfraccion;
 }Tinfraccion;
 
 typedef Tinfraccion * TlistInfraccion;
 
-typedef struct query3CDT{
+typedef struct Query3CDT{
     TlistInfraccion first;
-}query3CDT;
+}Query3CDT;
 
 
 // TlistPlates reordenarRec(TlistPlates plates, int * flag){
@@ -104,7 +104,7 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
         strcpy(aux->infraccionName,infraccionName);
         int c;
         aux->plates=addPlate(aux->plates,plate,&c);
-        aux->maxMultas=c;
+        aux->maxTickets=c;
         aux->MostPopularPlate=malloc((stlen(plate)+1)*sizeof(char));
         // if(aux->MostPopularPlate== NULL){
         //     errno=ENOMEM;
@@ -119,9 +119,9 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
     }
     int maxInfraccion;
     infraccionList->plates=addPlate(infraccionList->plates,plate,&maxInfraccion);
-    if(maxInfraccion>=infraccionList->maxMultas){
-        if(maxInfraccion>infraccionList->maxMultas){
-            infraccionList->maxMultas=maxInfraccion;
+    if(maxInfraccion>=infraccionList->maxTickets){
+        if(maxInfraccion>infraccionList->maxTickets){
+            infraccionList->maxTickets=maxInfraccion;
             infraccionList->MostPopularPlate=malloc((stlen(plate)+1)*sizeof(char));
         // if(infraccionList->MostPopularPlate== NULL){
         //     errno=ENOMEM;
@@ -143,9 +143,23 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
     return infraccionList;
 }
 
-void addInfraction(query3ADT query3, char * infraccionName, size_t infraccionID, char * plate){
+void addTicket(Query3ADT query3, char * infraccionName, size_t infraccionID, char * plate){
     query3->first=addInfractionRec(query3->first, infraccionName, infraccionID, plate);
 }
+
+Query3ADT newQuery3(void){
+    return calloc(1, sizeof(Query3CDT));
+}
+
+void printForQuery3(Query3ADT query3){
+    TlistInfraccion aux=query3->first;
+    while(aux!=NULL){
+        printf("%s;%s;%d",aux->infraccionName,aux->MostPopularPlate,aux->maxTickets);
+        aux=aux->nextInfraccion;
+    }
+}
+
+
 
 static void freeSublist(TlistPlates sublist){
     if(sublist == NULL){
@@ -171,6 +185,6 @@ static void freeList(TlistInfraccion list){
 }
 
 
-void freeInfraccion3(query3ADT query3){
+void freeInfraccion3(Query3ADT query3){
     freeList(query3->first);
 }
