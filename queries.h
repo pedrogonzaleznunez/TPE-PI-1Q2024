@@ -64,7 +64,7 @@ void freeQuery1(Query1ADT query1);
 
 Query3ADT newQuery3(void);
 
-void addTicket(Query3ADT query3, char * infraccionName, size_t infraccionID, char * plate);
+void addTicket(Query1ADT query1, Query3ADT query3, size_t infraccionID, char * plate);
 
 TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infraccionName, size_t infraccionID, char * plate);
 
