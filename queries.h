@@ -30,7 +30,7 @@
 // ------------------------------------------------------------- //
 
 typedef struct Query1CDT * Query1ADT;
-
+typedef struct Query2CDT * Query2ADT;
 typedef struct Query3CDT * Query3ADT;
 
 // ------------------------------------------------------------- //
