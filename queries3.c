@@ -27,40 +27,6 @@ typedef struct Query3CDT{
 }Query3CDT;
 
 
-// TlistPlates reordenarRec(TlistPlates plates, int * flag){
-//     if(plates==NULL || plates->tail==NULL){
-//         return plates;
-//     }
-//     if(plates->cantInfraccion < plates->tail->cantInfraccion){
-//         TlistPlates aux=plates->tail;
-//         plates->tail=reordenar(aux->tail);
-//         aux->tail=plates;
-//         *flag=1;
-//         return aux;
-//     }if(plates->cantInfraccion > plates->tail->cantInfraccion){
-//         plates->tail=reordenar(plates->tail);
-//         return plates;
-//     }
-//     int c;
-//     if((c=strcmp(plates->nameOfPlate,paltes->tail->nameOfPlate))<=0){
-//         plates->tail=reordenar(plates->tail);
-//         return plates;
-//     }
-//     TlistPlates aux=plates->tail;
-//     plates->tail=reordenar(aux->tail);
-//     aux->tail=plates;
-//     return aux;
-// }
-
-// void reordenar(TlistPlates plates){
-//     int cambio=1;
-//     while(cambio){
-//         cambio=0;
-//         reordenar(plates,&cambio);
-//     }
-// }
-
-
 TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck){
     int c;
     if(listPlates==NULL || (c=strcmp(listPlates->nameOfPlate,plate))>0){
