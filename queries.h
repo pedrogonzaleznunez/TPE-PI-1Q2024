@@ -71,6 +71,10 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
 
 TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck);
 
+void printForQuery3(Query3ADT query3);
+
+void freeInfraccion3(Query3ADT query3);
+
 // -------------------------------------------------------------- //
 // -------------------- AUXILIARY FUNCTIONS  -------------------- //
 // -------------------------------------------------------------- //
