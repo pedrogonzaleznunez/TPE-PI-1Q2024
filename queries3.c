@@ -158,7 +158,7 @@ Query3ADT newQuery3(void){
 void printForQuery3(Query3ADT query3){
     TlistInfraccion aux=query3->first;
     while(aux!=NULL){
-        printf("%s;%s;%d",aux->infraccionName,aux->MostPopularPlate,aux->maxTickets);
+        printf("%s;%s;%d \n",aux->infraccionName,aux->MostPopularPlate,aux->maxTickets);
         aux=aux->nextInfraccion;
     }
 }
@@ -171,7 +171,7 @@ static void freeSublist3(TlistPlates sublist){
     }
     freeSublist(sublist->tail);
     free(sublist->nameOfPlate);
-    // free(sublist);
+    free(sublist);
     return;
 }
 
@@ -184,7 +184,7 @@ static void freeList3(TlistInfraccion list){
     freeSublist(list->plates);
     free(list->infraccionName);
     free(list->MostPopularPlate);
-    // free(list); ??
+    free(list);
     return;
 }
 
