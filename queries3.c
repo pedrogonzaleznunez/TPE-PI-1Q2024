@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "errno.h"
 #include "queries.h"
+#include "queries.c"
 typedef struct plate{
     char * nameOfPlate;
     size_t cantInfraccion;
