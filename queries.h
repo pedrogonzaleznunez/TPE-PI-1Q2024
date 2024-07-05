@@ -31,6 +31,8 @@
 
 typedef struct Query1CDT * Query1ADT;
 
+typedef struct Query3CDT * Query3ADT;
+
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
@@ -54,11 +56,23 @@ void freeQuery1(Query1ADT query1);
 
 
 
+
+
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 3 ------------------- //
 // ------------------------------------------------------------- //
 
+Query3ADT newQuery3(void);
 
+void addTicket(Query1ADT query1, Query3ADT query3, size_t infraccionID, char * plate);
+
+TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infraccionName, size_t infraccionID, char * plate);
+
+TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck);
+
+void printForQuery3(Query3ADT query3);
+
+void freeInfraccion3(Query3ADT query3);
 
 // -------------------------------------------------------------- //
 // -------------------- AUXILIARY FUNCTIONS  -------------------- //
