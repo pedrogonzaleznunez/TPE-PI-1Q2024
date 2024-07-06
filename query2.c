@@ -38,13 +38,13 @@ typedef struct Query2CDT{
 
 typedef struct Query1CDT * Query1ADT;
 
-static void copyStr(TInfraction * vec,size_t infractionID){
-    vec[infractionID].infractionName= realloc(vec[infractionID].infractionName,(strlen(vec[infractionID].infractionName) + 1));
+static void copyStr(TInfraction * vec,size_t infractionID,char * s){
+    vec[infractionID].infractionName= realloc(vec[infractionID].infractionName,(strlen(s) + 1));
         if(vec[infractionID].infractionName == NULL){
             errno=ENOMEM;
             return;
         }
-        strcpy(vec[infractionID].infractionName,vec[infractionID].infractionName);
+        strcpy(vec[infractionID].infractionName,s);
         return;
 }
 
@@ -64,28 +64,22 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
         }
         first->infractions[infractionID].infractionsAmount++;
         if(first->infractions[infractionID].infractionName==NULL){
-            copyStr(first->infractions,infractionID);
+            copyStr(first->infractions,infractionID,query1->infractionsVec[infractionID].infractionName);
         }
 
         if(first->infractions[infractionID].infractionsAmount >= first->infractions[first->mostPopularID].infractionsAmount){
             if(first->infractions[infractionID].infractionsAmount > first->infractions[first->mostPopularID].infractionsAmount){
-                copyStr(first->infractions,infractionID);
-                if(first->infractions[infractionID].infractionName == NULL){
-                    free(first->infractions[infractionID].infractionName);
+                copyStr(first->infractions,first->mostPopularID,query1->infractionsVec[infractionID].infractionName);
+                if(first->infractions[first->mostPopularID].infractionName == NULL){
+                    free(first->infractions[first->mostPopularID].infractionName);
                     return ;
                 }
                 first->mostPopularID=infractionID;
                 return; //actualizo id y nombre
             }
             if(strcmp(first->infractions[infractionID].infractionName,first->infractions[first->mostPopularID].infractionName) < 0){
-                first->infractions[first->mostPopularID].infractionName= realloc(first->infractions[first->mostPopularID].infractionName,(strlen(first->infractions[infractionID].infractionName)+ 1)* sizeof(char));
-                if(first->infractions[first->mostPopularID].infractionName == NULL){
-                    errno=ENOMEM;
-                    return first;
-                }
+                copyStr(first->infractions,first->mostPopularID,first->infractions[infractionID].infractionName);
                 first->mostPopularID=infractionID;
-                strcpy(first->infractions[infractionID].infractionName,first->infractions[first->mostPopularID].infractionName);
-                    return;
             }
            
         }
