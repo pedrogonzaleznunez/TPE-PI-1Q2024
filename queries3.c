@@ -90,10 +90,10 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
         if(maxInfraccion>infraccionList->maxTickets){
             infraccionList->maxTickets=maxInfraccion;
             infraccionList->MostPopularPlate=malloc((stlen(plate)+1)*sizeof(char));
-        if(infraccionList->MostPopularPlate== NULL || errno == ENOMEM){
-            errno=ENOMEM;
-            return infraccionList;
-        }
+            if(infraccionList->MostPopularPlate== NULL || errno == ENOMEM){
+                errno=ENOMEM;
+                return infraccionList;
+            }
             strcpy(infraccionList->MostPopularPlate,plate);
             return infraccionList;
         }
