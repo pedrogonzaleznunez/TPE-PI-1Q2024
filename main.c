@@ -24,7 +24,7 @@
 #define OPENING_FILE_ERROR 2
 
 void readInfractionsFile(char const argv[], Query1ADT query1);
-void readTicketsFile(char const argv[], Query1ADT query1);
+void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3ADT query3);
 
 // @brief Main function
 // @param argc Number of files
@@ -39,19 +39,22 @@ int main(int argc, char const *argv[]){
 
     //Create CDTs
     Query1ADT query1 = newQuery1();
-    //Query2ADT query2 = newQuery2();
-    //Query3ADT query3 = newQuery3();
+    Query2ADT query2 = newQuery2();
+    Query3ADT query3 = newQuery3();
 
     //Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
-    readTicketsFile(argv[TICKETS_FILE], query1);
+    readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
 
     printInfractions(query1);
 
     //Front
 
     //Free resources
-
+    freeInfraccion3(query3);
+    freeQuery2(query2);
+    freeQuery1(query1);
+    return 0;
 }   
 
 // @brief Reads infraction's file and inserts the data into the CDT. 
@@ -99,7 +102,7 @@ void readInfractionsFile(char const * argv, Query1ADT query1){
     return;
 }
 
-void readTicketsFile(char const * argv, Query1ADT query1){
+void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query3ADT query3){
     
     FILE *file = fopen(argv, READ);
 
@@ -139,6 +142,9 @@ void readTicketsFile(char const * argv, Query1ADT query1){
 
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
+        addAgency(query1,query2,agency,atoi(id));
+        addTicket(query1,query3,atoi(id),plate);
+
         lineCounter++;
     }
     fclose(file);
