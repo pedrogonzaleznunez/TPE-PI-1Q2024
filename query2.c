@@ -38,6 +38,16 @@ typedef struct Query2CDT{
 
 typedef struct Query1CDT * Query1ADT;
 
+static void copyStr(TInfraction * vec,size_t infractionID){
+    vec[infractionID].infractionName= realloc(vec[infractionID].infractionName,(strlen(vec[infractionID].infractionName) + 1));
+        if(vec[infractionID].infractionName == NULL){
+            errno=ENOMEM;
+            return;
+        }
+        strcpy(vec[infractionID].infractionName,vec[infractionID].infractionName);
+        return;
+}
+
 void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
     if(query1->infractionsVec[infractionID].infractionName != NULL){// if valid infraction contained in csv infractions,evaluate. If not, ignore it
         if(infractionID > first->dim){
@@ -50,26 +60,25 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
                 first->infractions[i].infractionsAmount=0;
                 first->infractions[i].infractionName=NULL;
             }
-            first->dim=infractionID;
+            first->dim=infractionID + 1;
         }
         first->infractions[infractionID].infractionsAmount++;
         if(first->infractions[infractionID].infractionName==NULL){
-        first->infractions[infractionID].infractionName=malloc(sizeof(char)*(strlen(query1->infractionsVec[infractionID].infractionName)+1));
-        if(first->infractions[infractionID].infractionName == NULL){
-            errno=ENOMEM;
-            return first;
-        }
-
-        strcpy(first->infractions[infractionID].infractionName,query1->infractionsVec[infractionID].infractionName);
+            copyStr(first->infractions,infractionID);
         }
 
         if(first->infractions[infractionID].infractionsAmount >= first->infractions[first->mostPopularID].infractionsAmount){
             if(first->infractions[infractionID].infractionsAmount > first->infractions[first->mostPopularID].infractionsAmount){
+                copyStr(first->infractions,infractionID);
+                if(first->infractions[infractionID].infractionName == NULL){
+                    free(first->infractions[infractionID].infractionName);
+                    return ;
+                }
                 first->mostPopularID=infractionID;
-                    return; //actualizo id y nombre
+                return; //actualizo id y nombre
             }
             if(strcmp(first->infractions[infractionID].infractionName,first->infractions[first->mostPopularID].infractionName) < 0){
-                first->infractions[first->mostPopularID].infractionName= malloc((strlen(first->infractions[infractionID].infractionName)+ 1)* sizeof(char));
+                first->infractions[first->mostPopularID].infractionName= realloc(first->infractions[first->mostPopularID].infractionName,(strlen(first->infractions[infractionID].infractionName)+ 1)* sizeof(char));
                 if(first->infractions[first->mostPopularID].infractionName == NULL){
                     errno=ENOMEM;
                     return first;
@@ -81,6 +90,7 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
            
         }
     }
+    return ;
 }
 
 
@@ -114,12 +124,19 @@ void addAgency(Query1ADT query1,Query2ADT query, char * nameOfAgency, size_t inf
     return ;
 }
 //free query2
+static void freeVec(struct infractions * vec,size_t dim){
+    for(int i=0; i < dim;i++){
+        free(vec[i].infractionName);
+    }
+    return ;
+}
 
 static void freeList2(TListAgency list){
     if(list == NULL){
         return ;
     }
     freeList2(list->tail);
+    freeVec(list->infractions,list->dim);
     free(list->infractions);
     return;
 }
