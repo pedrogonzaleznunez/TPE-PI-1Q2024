@@ -38,6 +38,10 @@ typedef struct Query2CDT{
 
 typedef struct Query1CDT * Query1ADT;
 
+Query2ADT newQuery2(void){
+    return calloc(1,sizeof(Query2CDT));
+}
+
 static void copyStr(TInfraction * vec,size_t infractionID,char * s){
     vec[infractionID].infractionName= realloc(vec[infractionID].infractionName,(strlen(s) + 1));
         if(vec[infractionID].infractionName == NULL){
