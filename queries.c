@@ -24,7 +24,7 @@ typedef struct Query1CDT{
     TInfractions * infractionsVec;                      //array of infractions
     size_t dim;                                        //dimension of array
     size_t size;                                       //amount of infractions
-    char * infractionsNames;
+    char ** infractionsNames;
     size_t sizeNames;
 }Query1CDT;
 
@@ -310,9 +310,9 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
 }
 
 void addTicket(Query1ADT query1,Query3ADT query3, size_t infraccionID, char * plate){
-    if(query1->infractionsVec[infraccionID].infractionName!=NULL){
-        char * infraccionName = malloc((strlen(query1->infractionsVec[infraccionID].infractionName)+1)*sizeof(char));
-        strcpy(infraccionName,query1->infractionsVec[infraccionID].infractionName);
+    if(query1->infractionsNames[infraccionID]!=NULL){
+        char * infraccionName = malloc((strlen(query1->infractionsNames[infraccionID])+1)*sizeof(char));
+        strcpy(infraccionName,query1->infractionsNames[infraccionID]);
         query3->first=addInfractionRec(query3->first, infraccionName, infraccionID, plate);
     }
 }
