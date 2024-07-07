@@ -113,7 +113,7 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
     }
 
     if(query1->sizeNames < id){
-        query1->infractionsNames = realloc(query1->infractionsNames, (id) * sizeof(char));
+        query1->infractionsNames = realloc(query1->infractionsNames, (id) * sizeof(char *));
         for(int i = query1->sizeNames; i < id; i++){
             query1->infractionsNames[i] = NULL;
         }
@@ -168,6 +168,9 @@ void printInfractions(Query1ADT query1){
 }
 
 void freeQuery1(Query1ADT query1){
+    if(query1 == NULL)
+        return;
+
     
 }
 
@@ -229,7 +232,7 @@ void freeQuery1(Query1ADT query1){
 TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck){
     int c;
     if(listPlates==NULL || (c=strcmp(listPlates->nameOfPlate,plate))>0){
-        TlistPlates aux=malloc(sizeof(*aux));
+        TlistPlates aux=malloc(sizeof(Tplate));
         if ( aux == NULL || errno == ENOMEM) {
            return listPlates;  // If an error ocurred, it returns the same list, without making changes
         }
@@ -255,7 +258,7 @@ TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck){
 TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infraccionName, size_t infraccionID, char * plate){
     int c;
     if(infraccionList==NULL || (c=strcmp(infraccionList->infraccionName,infraccionName))>0){
-        TlistInfraccion aux=malloc(sizeof(*aux));
+        TlistInfraccion aux=malloc(sizeof(Tinfraccion));
         if(aux== NULL || errno == ENOMEM){
             errno=ENOMEM;
             return infraccionList;
@@ -268,8 +271,9 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
             return infraccionList;
         }
         strcpy(aux->infraccionName,infraccionName);
-        int c;
-        aux->plates=addPlate(aux->plates,plate,&c);
+        int c=0;
+        // aux->plates=NULL;
+        aux->plates=addPlate(NULL,plate,&c);
         aux->maxTickets=c;
         aux->MostPopularPlate=malloc((strlen(plate)+1)*sizeof(char));
         if(aux->MostPopularPlate== NULL || errno == ENOMEM){
@@ -310,10 +314,8 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
 }
 
 void addTicket(Query1ADT query1,Query3ADT query3, size_t infraccionID, char * plate){
-    if(query1->infractionsNames[infraccionID]!=NULL){
-        char * infraccionName = malloc((strlen(query1->infractionsNames[infraccionID])+1)*sizeof(char));
-        strcpy(infraccionName,query1->infractionsNames[infraccionID]);
-        query3->first=addInfractionRec(query3->first, infraccionName, infraccionID, plate);
+    if(query1->infractionsNames[infraccionID-1]!=NULL){
+        query3->first=addInfractionRec(query3->first, query1->infractionsNames[infraccionID-1], infraccionID, plate);
     }
 }
 

@@ -7,8 +7,6 @@
 #include "queries.h"
 #include "main.h"
 
-
-
 #if FORMATNYC
     #define NYC_INFRACTIONS
     #define NYC_TICKETS
@@ -48,11 +46,13 @@ int main(int argc, char const *argv[]){
 
     // [1st] Create CDTs
     Query1ADT query1 = newQuery1();
-    Query2ADT query2 = newQuery3();
+    Query2ADT query2 = newQuery2();
     Query3ADT query3 = newQuery3();
+    puts("ok 1");
 
     // [2nd] Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
+    puts("ok 2");
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
     
     // [3rd] Sort infractions
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[]){
     // FILE * fileQ1 = newFile("query1.csv");
     // writeQ1File(fileQ1,query1);
 
-    printForQuery3(query3);
+    // printForQuery3(query3);
     //Free resources
     freeQuery1(query1);
     freeInfraccion3(query3);
