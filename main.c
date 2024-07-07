@@ -60,13 +60,13 @@ int main(int argc, char const *argv[]){
     printInfractions(query1);
 
     // [4th] Write files
-    FILE * fileQ1 = newFile("query1.csv");
-    writeQ1File(fileQ1,query1);
+    // FILE * fileQ1 = newFile("query1.csv");
+    // writeQ1File(fileQ1,query1);
 
-
+    printForQuery3(query3);
     //Free resources
     freeQuery1(query1);
-    
+    freeInfraccion3(query3);
     return 0;
 }   
 
@@ -173,7 +173,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
         //addAgency(query1,query2,agency,atoi(id));
-        //addTicket(query1,query3,atoi(id),plate);
+        addTicket(query1,query3,atoi(id),plate);
 
         lineCounter++;
     }
