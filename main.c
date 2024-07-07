@@ -6,6 +6,7 @@
 #include <errno.h>
 #include "queries.h"
 #include "main.h"
+#include "front.h"
 
 
 #if FORMATNYC
@@ -41,30 +42,27 @@ void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3
 // @return 0 if the program was executed successfully, error number otherwise
 int main(int argc, char const *argv[]){
     if( argc != 3){
-        perror("Usage: ./main <tickets_file> <infractions_file>");
+        perror("Usage: ./parkingTickets### <tickets_file> <infractions_file>");
         exit(FORMAT_ERROR);
     }
 
     //Create CDTs
     Query1ADT query1 = newQuery1();
-    Query2ADT query2 = newQuery2();
-    Query3ADT query3 = newQuery3();
+    Query2ADT query2 = newQuery1();
+    Query3ADT query3 = newQuery1();
 
     //Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
-    FILE * csvQ1=newFile("query1.csv");
-    HeaderQ1(csvQ1);
-    writeRowQ1();
-
-    //printInfractions(query1);
+    
+    sortInfractionsDecreasing(query1);
+    printInfractions(query1);
 
     //Front
 
     //Free resources
-    freeInfraccion3(query3);
-    freeQuery2(query2);
     freeQuery1(query1);
+    
     return 0;
 }   
 
@@ -107,6 +105,7 @@ void readInfractionsFile(char const * argv, Query1ADT query1){
 
         //insert data into the CDT
         addInfractionsToVec(query1, atoi(id), descrip);
+        
         lineCounter++;
     }
     fclose(file);
@@ -153,8 +152,8 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
 
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
-        addAgency(query1,query2,agency,atoi(id));
-        addTicket(query1,query3,atoi(id),plate);
+        //addAgency(query1,query2,agency,atoi(id));
+        //addTicket(query1,query3,atoi(id),plate);
 
         lineCounter++;
     }
@@ -162,56 +161,3 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
     return;
 }
 
-void HeaderQ1(FILE * stream){
-    fputs("Infraction;Tickets\n",stream);
-}
-
-void writeRowQ1(FILE * stream,char * Infraction, char * Tickets){
-    char * info[]={Infraction,Tickets};
-    for (size_t i = 0; i < TOPQ1; i++)
-    {
-        fputs(info[i],stream);
-        switch (i)
-        {
-        case LASTQ1:
-            fputs(ESCAPE_N,stream);
-            break;
-        
-        default:
-            fputs(DELIM,stream);
-            break;
-        }
-    }
-}
-
-void HeaderQ2(FILE * stream){
-    fputs("IssuingAgency;Infraction;Tickets\n",stream);
-}
-
-void writeRowQ2(FILE * stream,char * agency,char * id,char * Tickets){ // para obtener el nombre del id hay que invocarlo con q1
-     char * info[]={agency,id,Tickets};
-    for (size_t i = 0; i < TOPQ2; i++)
-    {
-        fputs(info[i],stream);
-        switch (i)
-        {
-        case LASTQ2:
-            fputs(ESCAPE_N,stream);
-            break;
-        
-        default:
-            fputs(DELIM,stream);
-            break;
-        }
-    }
-}
-
-FILE * newFile(char * name){
-    errno = SET_ERRNO;
-    FILE * file=fopen(name,WRITETEXT);
-    if(errno != SET_ERRNO || file==NULL){
-        perror("Ocurrio un error mientras se creaba algun archivo\n");
-        exit (EXIT_FAILURE);
-    }
-    return file;
-}
