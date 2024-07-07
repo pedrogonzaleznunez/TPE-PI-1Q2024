@@ -54,7 +54,7 @@ int main(int argc, char const *argv[]){
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
     FILE * csvQ1=newFile("query1.csv");
-    writeHeaderQ1(csvQ1);
+    HeaderQ1(csvQ1);
     writeRowQ1();
 
     //printInfractions(query1);
@@ -162,7 +162,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
     return;
 }
 
-void writeHeaderQ1(FILE * stream){
+void HeaderQ1(FILE * stream){
     fputs("Infraction;Tickets\n",stream);
 }
 
@@ -182,4 +182,36 @@ void writeRowQ1(FILE * stream,char * Infraction, char * Tickets){
             break;
         }
     }
+}
+
+void HeaderQ2(FILE * stream){
+    fputs("IssuingAgency;Infraction;Tickets\n",stream);
+}
+
+void writeRowQ2(FILE * stream,char * agency,char * id,char * Tickets){ // para obtener el nombre del id hay que invocarlo con q1
+     char * info[]={agency,id,Tickets};
+    for (size_t i = 0; i < TOPQ2; i++)
+    {
+        fputs(info[i],stream);
+        switch (i)
+        {
+        case LASTQ2:
+            fputs(ESCAPE_N,stream);
+            break;
+        
+        default:
+            fputs(DELIM,stream);
+            break;
+        }
+    }
+}
+
+FILE * newFile(char * name){
+    errno = SET_ERRNO;
+    FILE * file=fopen(name,WRITETEXT);
+    if(errno != SET_ERRNO || file==NULL){
+        perror("Ocurrio un error mientras se creaba algun archivo\n");
+        exit (EXIT_FAILURE);
+    }
+    return file;
 }
