@@ -6,7 +6,7 @@
 #include <errno.h>
 #include "queries.h"
 #include "main.h"
-#include "front.h"
+
 
 
 #if FORMATNYC
@@ -46,25 +46,42 @@ int main(int argc, char const *argv[]){
         exit(FORMAT_ERROR);
     }
 
-    //Create CDTs
+    // [1st] Create CDTs
     Query1ADT query1 = newQuery1();
-    Query2ADT query2 = newQuery1();
-    Query3ADT query3 = newQuery1();
+    Query2ADT query2 = newQuery3();
+    Query3ADT query3 = newQuery3();
 
-    //Read files
+    // [2nd] Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
     
+    // [3rd] Sort infractions
     sortInfractionsDecreasing(query1);
     printInfractions(query1);
 
-    //Front
+    // [4th] Write files
+    FILE * fileQ1 = newFile("query1.csv");
+    writeQ1File(fileQ1,query1);
+
 
     //Free resources
     freeQuery1(query1);
     
     return 0;
 }   
+
+void deleteChar(char *string, char toDeleteChar) {
+    int i, j;
+    int len = strlen(string);
+
+    for (i = 0, j = 0; i < len; i++) {
+        if (string[i] != toDeleteChar) {
+            string[j++] = string[i];
+        }
+    }
+    string[j] = '\0'; // Agrega el terminador nulo al final de la cadena resultante
+}
+
 
 // @brief Reads infraction's file and inserts the data into the CDT. 
 // @param fileToRead File to read
@@ -98,6 +115,7 @@ void readInfractionsFile(char const * argv, Query1ADT query1){
             }
             else if (columnCounter == description) {
                 descrip = token;
+                deleteChar(descrip, '\n');
             }
             
             token = strtok(NULL, DELIM);
@@ -139,12 +157,14 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
         for(columnCounter = 0; token != NULL; columnCounter++){
             if (columnCounter == plateNumber) {
                 plate = token;
+                deleteChar(plate, '\n');
             }
             else if (columnCounter == infractionId) {
                 id = token;
             }
             else if (columnCounter == issuingAgency) {
                 agency = token;
+                deleteChar(agency, '\n');
             }
             
             token = strtok(NULL, DELIM);
@@ -160,4 +180,5 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
     fclose(file);
     return;
 }
+
 
