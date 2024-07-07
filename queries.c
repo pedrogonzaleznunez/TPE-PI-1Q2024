@@ -24,6 +24,8 @@ typedef struct Query1CDT{
     TInfractions * infractionsVec;                      //array of infractions
     size_t dim;                                        //dimension of array
     size_t size;                                       //amount of infractions
+    char * infractionsNames;
+    size_t sizeNames;
 }Query1CDT;
 
 // ------------------------------------------------------------- //
@@ -109,14 +111,24 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
         query1->size += BLOCK;
         
     }
-    query1->dim++;
 
+    if(query1->sizeNames < id){
+        query1->infractionsNames = realloc(query1->infractionsNames, (id) * sizeof(char));
+        for(int i = query1->sizeNames; i < id; i++){
+            query1->infractionsNames[i] = NULL;
+        }
+        query1->sizeNames = id;
+    }
+
+    query1->dim++;
     //save data to the struct
     query1->infractionsVec[query1->dim-1].id = id;
     query1->infractionsVec[query1->dim-1].count = 0;
 
     query1->infractionsVec[query1->dim-1].infractionName = malloc(( DESCRIP_INFRAC_LENGHT + 2) * sizeof(char));
     strcpy(query1->infractionsVec[query1->dim-1].infractionName, infractionName);
+
+    query1->infractionsNames[id-1] = query1->infractionsVec[query1->dim-1].infractionName;
 
     return;
 }
