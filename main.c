@@ -22,6 +22,14 @@
 #define SET_ERRNO 0
 #define FORMAT_ERROR 1
 #define OPENING_FILE_ERROR 2
+#define ESCAPE_N "\n"
+#define TOPQ1 2
+#define LASTQ1 (TOPQ1-1)
+#define TOPQ2 3
+#define LASTQ2 (TOPQ2-1)
+#define TOPQ3 3
+#define LASTQ3 (TOPQ3-1)
+#define WRITETEXT "wt"
 
 void readInfractionsFile(char const argv[], Query1ADT query1);
 void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3ADT query3);
@@ -45,8 +53,11 @@ int main(int argc, char const *argv[]){
     //Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
+    FILE * csvQ1=newFile("query1.csv");
+    writeHeaderQ1(csvQ1);
+    writeRowQ1();
 
-    printInfractions(query1);
+    //printInfractions(query1);
 
     //Front
 
@@ -149,4 +160,26 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
     }
     fclose(file);
     return;
+}
+
+void writeHeaderQ1(FILE * stream){
+    fputs("Infraction;Tickets\n",stream);
+}
+
+void writeRowQ1(FILE * stream,char * Infraction, char * Tickets){
+    char * info[]={Infraction,Tickets};
+    for (size_t i = 0; i < TOPQ1; i++)
+    {
+        fputs(info[i],stream);
+        switch (i)
+        {
+        case LASTQ1:
+            fputs(ESCAPE_N,stream);
+            break;
+        
+        default:
+            fputs(DELIM,stream);
+            break;
+        }
+    }
 }
