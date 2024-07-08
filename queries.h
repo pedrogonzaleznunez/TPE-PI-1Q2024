@@ -73,8 +73,9 @@ void printInfractions2(Query1ADT query1, Query2ADT query2);
 
 Query3ADT newQuery3(void);
 
-void addTicket(Query1ADT query1, Query3ADT query3, size_t infraccionID, char * plate);
+void addTIcket(Query1ADT query1, Query3ADT query3, char * plate,int infraccionID);
 
+//temporal function
 void printForQuery3(Query3ADT query3);
 
 void freeInfraccion3(Query3ADT query3);
