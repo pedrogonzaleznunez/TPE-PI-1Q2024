@@ -22,12 +22,6 @@
 #define FORMAT_ERROR 1
 #define OPENING_FILE_ERROR 2
 #define ESCAPE_N "\n"
-#define TOPQ1 2
-#define LASTQ1 (TOPQ1-1)
-#define TOPQ2 3
-#define LASTQ2 (TOPQ2-1)
-#define TOPQ3 3
-#define LASTQ3 (TOPQ3-1)
 #define WRITETEXT "wt"
 
 void readInfractionsFile(char const argv[], Query1ADT query1);
@@ -48,11 +42,9 @@ int main(int argc, char const *argv[]){
     Query1ADT query1 = newQuery1();
     Query2ADT query2 = newQuery2();
     Query3ADT query3 = newQuery3();
-    puts("ok 1");
 
     // [2nd] Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
-    puts("ok 2");
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
     
     // [3rd] Sort infractions
@@ -66,7 +58,7 @@ int main(int argc, char const *argv[]){
     // printForQuery3(query3);
     //Free resources
     freeQuery1(query1);
-    freeInfraccion3(query3);
+    //freeInfraccion3(query3);
     return 0;
 }   
 
@@ -172,8 +164,8 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
 
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
-        //addAgency(query1,query2,agency,atoi(id));
-        addTicket(query1,query3,atoi(id),plate);
+        //addTicket(query1,query3,atoi(id),plate);
+        addAgency(query1,query2,agency,atoi(id));
 
         lineCounter++;
     }
