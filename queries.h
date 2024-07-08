@@ -77,9 +77,13 @@ void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate);
 
 void createVec3(Query1ADT query1, Query3ADT query3);
 //temporal function
-void printForQuery3(Query3ADT query3);
+void printForQuery3(Query3ADT query3, int dim);
 
 void freeInfraccion3(Query3ADT query3);
+
+void freeQ3(Query3ADT query3);
+
+int sortInfractionsDecreasingQuery3(Query3ADT query3);
 
 // -------------------------------------------------------------- //
 // -------------------- AUXILIARY FUNCTIONS  -------------------- //

@@ -84,7 +84,7 @@ typedef struct Query3CDT{
 // * @param a First element to compare
 // * @param b Second element to compare
 // * @return 0 if a and b are equal, a positive number if a is greater than b, a negative number if a is less than b
-static int comparator(TInfractions * a, TInfractions * b){
+static int comparator1(TInfractions * a, TInfractions * b){
     int cmp = b->count - a->count;
     
     if( cmp==0 )
@@ -168,7 +168,7 @@ void sortInfractionsDecreasing(Query1ADT query1){
     if(query1 == NULL)
         return;
 
-    qsort(query1->infractionsVec, query1->dim, sizeof(TInfractions),(int (*)(const void *, const void *))comparator);
+    qsort(query1->infractionsVec, query1->dim, sizeof(TInfractions),(int (*)(const void *, const void *))comparator1);
     return;
 }
 
@@ -303,9 +303,12 @@ void printInfractions2(Query1ADT query1, Query2ADT query2){
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 3 ------------------- //
 // ------------------------------------------------------------- //
+int comparator3(TInfractions3 * a, TInfractions3 * b){
+    return strcmp(a->infractionName,b->infractionName);
+}
 
 Query3ADT newQuery3(void){
-    Query3ADT aux= calloc(1,sizeof(Query3CDT));
+    Query3ADT aux = calloc(1,sizeof(Query3CDT));
     return aux;
 }
 //takes infractionName from query1
@@ -343,8 +346,10 @@ void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate){
         return;
     }
     int cant=0;
-    query3->infractionsVec3[id-1].infractionName=query1->infractionsNames[id-1];
+
+    query3->infractionsVec3[id-1].infractionName = query1->infractionsNames[id-1];
     query3->infractionsVec3[id-1].first=addPlate(query3->infractionsVec3[id-1].first,plate,&cant);
+
     if(cant > query3->infractionsVec3[id-1].maxTickets){
         query3->infractionsVec3[id-1].mostPopularPlate=realloc(query3->infractionsVec3[id-1].mostPopularPlate,sizeof(char) * (strlen(plate)+1));
         strcpy(query3->infractionsVec3[id-1].mostPopularPlate,plate);
@@ -359,22 +364,22 @@ void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate){
     return;
 }
 
-static void freeList(TlistPlates list){
-    if(list==NULL){
-        return;
-    }
-    freeList(list->tail);
-    free(list->nameOfPlate);
-    free(list);
-    return;
-}
+// static void freeList(TlistPlates list){
+//     if(list==NULL){
+//         return;
+//     }
+//     freeList(list->tail);
+    
+//     free(list->nameOfPlate);
+//     free(list);
+//     return;
+// }
 
 static void freeVec3(TInfractions3 * vec,size_t dim){
-    for(int i=0; i < dim; i++){
-        freeList(vec[i].first);
-        free(vec[i].infractionName);
-        free(vec[i].mostPopularPlate);
-    }
+    // for(int i=0; i < dim; i++){
+    //     if(vec[i].first != NULL)
+    //         freeList(vec[i].first);
+    // }    
     free(vec);
     return ;
 }
@@ -383,18 +388,29 @@ void freeQ3(Query3ADT query3){
     freeVec3(query3->infractionsVec3,query3->dim);
     free(query3);
 }
-void sortInfractionsDecreasingQuery3(Query3ADT query3){
-    if(query3 == NULL)
-        return;
 
-    qsort(query3->infractionsVec3, query3->dim, sizeof(TInfractions3),strcmp);
-    return;
+static int eliminaCeros(size_t dim, TInfractions3 * vec){
+    int i, j;
+
+    for(i = 0, j = 0; i < dim; i++){
+        if(vec[i].first != NULL){
+            vec[j++] = vec[i];
+        }
+    }
+    return j;
 }
 
-void printForQuery3(Query3ADT query3){
+int sortInfractionsDecreasingQuery3(Query3ADT query3){
+    if(query3 == NULL)
+        return 0;
+    int dim = eliminaCeros(query3->dim,query3->infractionsVec3);
+    qsort(query3->infractionsVec3, dim, sizeof(TInfractions3),(int (*)(const void *, const void *))comparator3);
+    return dim;
+}
+
+void printForQuery3(Query3ADT query3, int dim){
     int i;
-    for(i=0;i<query3->dim;i++){
-        printf("%s,%s,%ld \n",query3->infractionsVec3[i].infractionName,query3->infractionsVec3[i].mostPopularPlate,query3->infractionsVec3[i].maxTickets);
+    for(i=0;i<dim;i++){
+        printf("%s;%s;%ld \n",query3->infractionsVec3[i].infractionName,query3->infractionsVec3[i].mostPopularPlate,query3->infractionsVec3[i].maxTickets);     
     }
-    printf("contador: %d",i);
 }

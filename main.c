@@ -45,10 +45,11 @@ int main(int argc, char const *argv[]){
 
     // [2nd] Read files
     readInfractionsFile(argv[INFRACTIONS_FILE], query1);
+    createVec3(query1,query3);
     readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
     
     // [3rd] Sort infractions
-    sortInfractionsDecreasing(query1);
+    //sortInfractionsDecreasing(query1);
     //printInfractions(query1);
 
     // printInfractions2(query1,query2);
@@ -56,13 +57,14 @@ int main(int argc, char const *argv[]){
     // [4th] Write files
     // FILE * fileQ1 = newFile("query1.csv");
     // writeQ1File(fileQ1,query1);
-
-    printForQuery3(query3);
+    
+    int c = sortInfractionsDecreasingQuery3(query3);
+    printForQuery3(query3,c);
 
     //Free resources
-    //freeQuery1(query1);
-    freeQuery2(query2);
+    freeQuery1(query1);
     freeQ3(query3);
+    //freeQuery2(query2);
     return 0;
 }   
 
@@ -168,7 +170,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
         addInfraction3(query1,query3, atoi(id),plate);
-        addAgency(query1,query2,agency,atoi(id));
+        //addAgency(query1,query2,agency,atoi(id));
 
         lineCounter++;
     }
