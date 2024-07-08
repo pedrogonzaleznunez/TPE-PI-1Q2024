@@ -53,43 +53,43 @@ static void copyStr(TInfraction * vec,size_t infractionID,char * s){
 }
 
 void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
-    if(query1->infractionsVec[infractionID].infractionName != NULL){// if valid infraction contained in csv infractions,evaluate. If not, ignore it
+    if((infractionID < query1->sizeNames) && (query1->infractionsNames[infractionID-1] != NULL)){// if valid infraction contained in csv infractions,evaluate. If not, ignore it
         if(infractionID > first->dim){
             first->infractions=realloc(first->infractions,sizeof(TInfraction) * infractionID);
             if(first->infractions == NULL){
                 errno=ENOMEM;
-                return first;
+                free(first->infractions);
+                return ;
             }
             for(int i=first->dim; i < infractionID;i++){
                 first->infractions[i].infractionsAmount=0;
                 first->infractions[i].infractionName=NULL;
             }
-            first->dim=infractionID + 1;
+            first->dim=infractionID;
         }
-        first->infractions[infractionID].infractionsAmount++;
-        if(first->infractions[infractionID].infractionName==NULL){
-            copyStr(first->infractions,infractionID,query1->infractionsVec[infractionID].infractionName);
+        first->infractions[infractionID-1].infractionsAmount++;
+        if(first->infractions[infractionID-1].infractionName==NULL){// if valid infraction but first appearance,copy name
+            copyStr(first->infractions,infractionID,query1->infractionsNames[infractionID-1]);
         }
 
-        if(first->infractions[infractionID].infractionsAmount >= first->infractions[first->mostPopularID].infractionsAmount){
-            if(first->infractions[infractionID].infractionsAmount > first->infractions[first->mostPopularID].infractionsAmount){
-                copyStr(first->infractions,first->mostPopularID,query1->infractionsVec[infractionID].infractionName);
-                if(first->infractions[first->mostPopularID].infractionName == NULL){
-                    free(first->infractions[first->mostPopularID].infractionName);
+        if(first->infractions[infractionID-1].infractionsAmount > first->infractions[first->mostPopularID-1].infractionsAmount){
+                copyStr(first->infractions,first->mostPopularID,query1->infractionsNames[infractionID -1]);
+                if(first->infractions[first->mostPopularID-1].infractionName == NULL){
+                    free(first->infractions[first->mostPopularID-1].infractionName);
+                    errno=ENOMEM;
                     return ;
                 }
                 first->mostPopularID=infractionID;
                 return; //actualizo id y nombre
+            }else if(first->infractions[infractionID-1].infractionsAmount == first->infractions[first->mostPopularID-1].infractionsAmount){
+            if(strcmp(first->infractions[infractionID-1].infractionName,first->infractions[first->mostPopularID-1].infractionName) < 0){
+                copyStr(first->infractions,first->mostPopularID,first->infractions[infractionID-1].infractionName);
             }
-            if(strcmp(first->infractions[infractionID].infractionName,first->infractions[first->mostPopularID].infractionName) < 0){
-                copyStr(first->infractions,first->mostPopularID,first->infractions[infractionID].infractionName);
-                first->mostPopularID=infractionID;
             }
            
         }
-    }
     return ;
-}
+    }
 
 
 static TListAgency addAgencyRec(Query1ADT query1, TListAgency first, char * name, size_t infractionID){

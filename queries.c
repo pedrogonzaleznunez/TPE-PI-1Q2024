@@ -7,6 +7,7 @@
 
 #define MAX_LINE_LENGTH 100
 #define BLOCK 10
+#define SET_ERRNO 0
 #define TRUE 1
 #define FALSE !TRUE
 
@@ -102,18 +103,27 @@ Query1ADT newQuery1(void){
 // * @param infractionName Name of the infraction
 // * @precondition query1 != NULL
 void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
+    errno= SET_ERRNO;
     if(query1 == NULL)
         return;
     
     //check if the array is full, if so, realloc for more space
     if(query1->dim % BLOCK == 0){
         query1->infractionsVec = realloc(query1->infractionsVec, (query1->dim + BLOCK) * sizeof(TInfractions));
+        if(query1->infractionsVec == NULL){
+            errno=ENOMEM;
+            return ;
+        }
         query1->size += BLOCK;
         
     }
 
     if(query1->sizeNames < id){
         query1->infractionsNames = realloc(query1->infractionsNames, (id) * sizeof(char *));
+        if(query1->infractionsNames == NULL){
+            errno=ENOMEM;
+            return ;
+        }
         for(int i = query1->sizeNames; i < id; i++){
             query1->infractionsNames[i] = NULL;
         }
@@ -126,6 +136,10 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
     query1->infractionsVec[query1->dim-1].count = 0;
 
     query1->infractionsVec[query1->dim-1].infractionName = malloc(( DESCRIP_INFRAC_LENGHT + 2) * sizeof(char));
+    if(query1->infractionsVec[query1->dim-1].infractionName == NULL){
+            errno=ENOMEM;
+            return ;
+        }
     strcpy(query1->infractionsVec[query1->dim-1].infractionName, infractionName);
 
     query1->infractionsNames[id-1] = query1->infractionsVec[query1->dim-1].infractionName;
@@ -314,7 +328,7 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
 }
 
 void addTicket(Query1ADT query1,Query3ADT query3, size_t infraccionID, char * plate){
-    if(query1->infractionsNames[infraccionID-1]!=NULL){
+    if((infraccionID < query1->sizeNames) && (query1->infractionsNames[infraccionID-1]!=NULL) && (plate !=NULL)){
         query3->first=addInfractionRec(query3->first, query1->infractionsNames[infraccionID-1], infraccionID, plate);
     }
 }
