@@ -369,9 +369,9 @@ static void freeList(TlistPlates list){
     return;
 }
 
-static void freeVec(TInfractions3 * vec,size_t dim){
+static void freeVec3(TInfractions3 * vec,size_t dim){
     for(int i=0; i < dim; i++){
-        freelist(vec[i].first);
+        freeList(vec[i].first);
         free(vec[i].infractionName);
         free(vec[i].mostPopularPlate);
     }
@@ -380,7 +380,7 @@ static void freeVec(TInfractions3 * vec,size_t dim){
 }
 
 void freeQ3(Query3ADT query3){
-    freeVec(query3->infractionsVec3,query3->dim);
+    freeVec3(query3->infractionsVec3,query3->dim);
     free(query3);
 }
 void sortInfractionsDecreasingQuery3(Query3ADT query3){
