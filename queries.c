@@ -387,11 +387,12 @@ static TlistPlates addPlates(TlistPlates list,char * plate,int * toCheck ){
 
 
 static TlistInfraccion addInfraction3(Query1ADT query1, TlistInfraccion list, char * infractionName,size_t infractionID,char * plate){
-int c, maxInfrac=0;;
+int c, maxInfrac=0;
     if(list==NULL || (c=strcmp(list->infraccionName,infractionName))>0){
         TlistInfraccion aux=malloc(sizeof(Tinfraccion));
         aux->idInfraccion=infractionID;
         aux->infraccionName=query1->infractionsNames[infractionID-1];
+        aux->plates=NULL;
         aux->plates=addPlates(aux->plates,plate,&maxInfrac);
         aux->MostPopularPlate=malloc((strlen(plate)+1)*sizeof(char));
         strcpy(aux->MostPopularPlate,plate);
@@ -416,14 +417,15 @@ int c, maxInfrac=0;;
         }
         return list;
     }
-    list->nextInfraccion=TlistInfraccion3(query1,list->nextInfraccion,infractionName,infractionID,plate);
+    list->nextInfraccion=addInfraction3(query1,list->nextInfraccion,infractionName,infractionID,plate);
     return list;
 }
 
 void addTicket(Query1ADT query1, Query3ADT query3, char * plate,size_t infractionID){
-    if((query1 != NULL && query3 == NULL) && ((infractionID <= query1->sizeNames && query1->infractionsNames[infractionID]!=NULL) && plate!=NULL)){
+    if((query1 != NULL && query3 != NULL) && ((infractionID <= query1->sizeNames && query1->infractionsNames[infractionID-1]!=NULL) && plate!=NULL)){
         query3->first=addInfraction3(query1,query3->first,query1->infractionsNames[infractionID-1],infractionID,plate);
     }
+
 }
 
 void printForQuery3(Query3ADT query3){
