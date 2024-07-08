@@ -16,7 +16,6 @@
     #define CHI_TICKETS
 #endif
 
-
 #define MAX_LINE_LENGTH 100
 #define SET_ERRNO 0
 #define FORMAT_ERROR 1
@@ -49,16 +48,20 @@ int main(int argc, char const *argv[]){
     
     // [3rd] Sort infractions
     sortInfractionsDecreasing(query1);
-    printInfractions(query1);
+    //printInfractions(query1);
+
+    // printInfractions2(query1,query2);
 
     // [4th] Write files
     // FILE * fileQ1 = newFile("query1.csv");
     // writeQ1File(fileQ1,query1);
 
-    // printForQuery3(query3);
+    printForQuery3(query3);
+
     //Free resources
-    freeQuery1(query1);
-    //freeInfraccion3(query3);
+    //freeQuery1(query1);
+    freeQuery2(query2);
+    freeInfraccion3(query3);
     return 0;
 }   
 
@@ -164,7 +167,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
 
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
-        //addTicket(query1,query3,atoi(id),plate);
+        addTicket(query1,query3,atoi(id),plate);
         addAgency(query1,query2,agency,atoi(id));
 
         lineCounter++;
@@ -172,5 +175,4 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
     fclose(file);
     return;
 }
-
 

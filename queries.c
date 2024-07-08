@@ -184,117 +184,105 @@ void printInfractions(Query1ADT query1){
     }
 }
 
+
+//free query1
+static freeVec(TInfractions * vec,size_t dim){
+    for(size_t idx=0; idx < dim; idx++){
+        free(vec[idx].infractionName);
+    }
+    free(vec);
+    return ;
+}
+
 void freeQuery1(Query1ADT query1){
     if(query1 == NULL)
         return;
-   
+    freeVec(query1->infractionsVec,query1->dim);
+    free(query1->infractionsNames);
+    free(query1);
+    return ;
 }
-
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 2 ------------------- //
 // ------------------------------------------------------------- //
-
-static void copyStr(TInfraction2 * vec,size_t infractionID,char * s){
-    vec[infractionID].infractionName= realloc(vec[infractionID].infractionName,(strlen(s) + 1));
-        if(vec[infractionID].infractionName == NULL){
-            errno=ENOMEM;
-            return;
-        }
-        strcpy(vec[infractionID].infractionName,s);
-        return;
-}
 
 Query2ADT newQuery2(void){
     return calloc(1,sizeof(Query2CDT));
 }
 
-void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
-    if((infractionID < query1->sizeNames) && (query1->infractionsNames[infractionID-1] != NULL)){// if valid infraction contained in csv infractions,evaluate. If not, ignore it
-        if(infractionID > first->dim){
-            first->infractions=realloc(first->infractions,sizeof(TInfraction2) * infractionID);
-            if(first->infractions == NULL){
-                errno=ENOMEM;
-                free(first->infractions);
-                return ;
-            }
-            for(int i=first->dim; i < infractionID;i++){
-                first->infractions[i].infractionsAmount=0;
-                first->infractions[i].infractionName=NULL;
-            }
-            first->dim=infractionID;
-        }
-        first->infractions[infractionID-1].infractionsAmount++;
-        if(first->infractions[infractionID-1].infractionName==NULL){// if valid infraction but first appearance,copy name
-            copyStr(first->infractions,infractionID,query1->infractionsNames[infractionID-1]);
-        }
-
-        if(first->infractions[infractionID-1].infractionsAmount > first->infractions[first->mostPopularID-1].infractionsAmount){
-                copyStr(first->infractions,first->mostPopularID,query1->infractionsNames[infractionID -1]);
-                if(first->infractions[first->mostPopularID-1].infractionName == NULL){
-                    free(first->infractions[first->mostPopularID-1].infractionName);
-                    errno=ENOMEM;
-                    return ;
-                }
-                first->mostPopularID=infractionID;
-                return; //actualizo id y nombre
-            }else if(first->infractions[infractionID-1].infractionsAmount == first->infractions[first->mostPopularID-1].infractionsAmount){
-            if(strcmp(first->infractions[infractionID-1].infractionName,first->infractions[first->mostPopularID-1].infractionName) < 0){
-                copyStr(first->infractions,first->mostPopularID,first->infractions[infractionID-1].infractionName);
-            }
-            }
-           
-        }
-    return ;
-    }
-
-
-static TListAgency addAgencyRec(Query1ADT query1, TListAgency first, char * name, size_t infractionID){
+static TListAgency addAgencyRec(Query1ADT query1, TListAgency agencies, char * nameOfAgency, size_t infractionID){
     int d;
-    if ( first == NULL || ( d = strcmp(first->agencyName, name)) > 0) {
-        errno = 0;
-        TListAgency aux = malloc(sizeof(TAgencies));
-        if ( aux == NULL || errno == ENOMEM) {
-           return first;  // If an error ocurred, it returns the same list, without making changes
-        }
-        aux->agencyName= malloc((strlen(name)+ 1)* sizeof(char));
-        if(aux->agencyName == NULL){
-            errno=ENOMEM;
-            return first;
-        }
-        strcpy(aux->agencyName, name);
-        aux->tail = first;
-        addInfraction2(query1,aux,infractionID);
-        return aux;
+    if(agencies == NULL || (d=strcmp(agencies->agencyName,nameOfAgency))>0){
+        TListAgency new = malloc(sizeof(TAgencies));
+        new->agencyName = malloc((strlen(nameOfAgency) + 1)* sizeof(char));
+        strcpy(new->agencyName,nameOfAgency);
+        new->infractions = NULL;
+        new->tail = agencies;
+        new->mostPopularID=infractionID;
+        new->dim = 0;
+        //llamado para agregar la infraccion
+        addInfraction2(query1,new,infractionID);
+        return new;
     }
-    if ( d < 0){
-        first->tail = addAgencyRec(query1,first->tail, name,infractionID);
+    if(d<0){
+        agencies->tail = addAgencyRec(query1,agencies->tail,nameOfAgency,infractionID);
+        return agencies;
     }
-    addInfraction2(query1,first,infractionID);
-    return first;
+    //if the agency already exists
+    addInfraction2(query1,agencies,infractionID);
+    return agencies;
+        
 }
 
-void addAgency(Query1ADT query1,Query2ADT query2, char * nameOfAgency, size_t infractionID){
-    if(query2 == NULL)
+void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
+    if(query1 == NULL || first == NULL){
         return;
+    }
     
-    query2->first = addAgencyRec(query1,query2->first, nameOfAgency,infractionID);
-    return ;
+    if(first->dim < infractionID){
+
+        first->infractions = realloc(first->infractions,infractionID * sizeof(TInfraction2));
+
+        for(size_t i = first->dim; i < infractionID; i++){
+            first->infractions[i].infractionName = NULL;
+            first->infractions[i].infractionsAmount = 0;
+        }
+        
+        first->dim = infractionID;
+        
+    }
+
+    //add ocurrence of infraction, as it exists
+    first->infractions[infractionID-1].infractionsAmount++;
+
+    //check if it is the most popular infraction
+    if(first->infractions[infractionID-1].infractionsAmount > first->infractions[first->mostPopularID-1].infractionsAmount){
+        first->mostPopularID = infractionID;
+    }
+    // if it is the same amount of infractions, check if the name is lexicographically smaller
+    else if(first->infractions[infractionID-1].infractionsAmount == first->infractions[first->mostPopularID-1].infractionsAmount){
+        if(strcmp(query1->infractionsNames[infractionID-1],query1->infractionsNames[first->mostPopularID-1]) < 0)
+            first->mostPopularID = infractionID;
+    }
+
+    return;
+}
+
+void addAgency(Query1ADT query1,Query2ADT query2, char * nameOfAgency, size_t infractionID){    
+    if( query1 == NULL || query2 == NULL ||  query1->sizeNames < infractionID || query1->infractionsNames[infractionID-1] == NULL){
+        return;
+    }
+    
+    query2->first = addAgencyRec(query1,query2->first,nameOfAgency,infractionID);
+    return;
 }
 
 //free query2
-static void freeVec(struct infractions2 * vec,size_t dim){
-    for(int i=0; i < dim;i++){
-        free(vec[i].infractionName);
-    }
-    return ;
-}
-
 static void freeList2(TListAgency list){
     if(list == NULL){
         return ;
     }
     freeList2(list->tail);
-    freeVec(list->infractions,list->dim);
     free(list->infractions);
     return;
 }
@@ -305,11 +293,20 @@ void freeQuery2(Query2ADT query2){
     return;
 }
 
+void printInfractions2(Query1ADT query1, Query2ADT query2){
+    TListAgency aux = query2->first;
+    while(aux != NULL){
+        printf("%s;%s;%ld\n",aux->agencyName,query1->infractionsNames[aux->mostPopularID-1],aux->infractions[aux->mostPopularID-1].infractionsAmount);
+        aux = aux->tail;
+    }
+    return;
+}
+
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 3 ------------------- //
 // ------------------------------------------------------------- //
 
-TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck){
+static TlistPlates addPlate(TlistPlates listPlates,const char * plate, size_t * toCheck){
     int c;
     if(listPlates==NULL || (c=strcmp(listPlates->nameOfPlate,plate))>0){
         TlistPlates aux=malloc(sizeof(Tplate));
@@ -335,7 +332,7 @@ TlistPlates addPlate(TlistPlates listPlates, char * plate, int * toCheck){
     return listPlates;
 }
 
-TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infraccionName, size_t infraccionID, char * plate){
+static TlistInfraccion addInfractionRec(TlistInfraccion infraccionList,const char * infraccionName, size_t infraccionID,const char * plate){
     int c;
     if(infraccionList==NULL || (c=strcmp(infraccionList->infraccionName,infraccionName))>0){
         TlistInfraccion aux=malloc(sizeof(Tinfraccion));
@@ -351,10 +348,10 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
             return infraccionList;
         }
         strcpy(aux->infraccionName,infraccionName);
-        int c=0;
+        size_t p=0;
         // aux->plates=NULL;
-        aux->plates=addPlate(NULL,plate,&c);
-        aux->maxTickets=c;
+        aux->plates=addPlate(NULL,plate,&p);
+        aux->maxTickets=p;
         aux->MostPopularPlate=malloc((strlen(plate)+1)*sizeof(char));
         if(aux->MostPopularPlate== NULL || errno == ENOMEM){
             errno=ENOMEM;
@@ -367,7 +364,7 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
         infraccionList->nextInfraccion=addInfractionRec(infraccionList->nextInfraccion,infraccionName,infraccionID,plate);
         return infraccionList;
     }
-    int maxInfraccion;
+    size_t maxInfraccion=0;
     infraccionList->plates=addPlate(infraccionList->plates,plate,&maxInfraccion);
     if(maxInfraccion>=infraccionList->maxTickets){
         if(maxInfraccion>infraccionList->maxTickets){
@@ -394,7 +391,7 @@ TlistInfraccion addInfractionRec(TlistInfraccion infraccionList, char * infracci
 }
 
 void addTicket(Query1ADT query1,Query3ADT query3, size_t infraccionID, char * plate){
-    if((infraccionID < query1->sizeNames) && (query1->infractionsNames[infraccionID-1]!=NULL) && (plate !=NULL)){
+    if((infraccionID <= query1->sizeNames) && (query1->infractionsNames[infraccionID-1]!=NULL) && (plate !=NULL)){
         query3->first=addInfractionRec(query3->first, query1->infractionsNames[infraccionID-1], infraccionID, plate);
     }
 }

@@ -1,6 +1,5 @@
 #include "front.h"
 
-
 // void HeaderQ1(FILE * stream){
 //     fputs("Infraction;Tickets\n",stream);
 // }
