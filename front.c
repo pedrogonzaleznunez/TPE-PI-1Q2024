@@ -1,55 +1,26 @@
 #include "front.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include "queries.h"
 
-// void HeaderQ1(FILE * stream){
-//     fputs("Infraction;Tickets\n",stream);
-// }
+//FrontEnd functions
+FILE * newFile(char * name){
+    FILE * file=fopen(name,"wt");
+    if(errno != 0|| file==NULL){
+        perror("ERROR - Creating new file\n");
+        exit(EXIT_FAILURE);
+    }
+    return file;
+}
 
-// void writeRowQ1(FILE * stream,char * Infraction, char * Tickets){
-//     char * info[]={Infraction,Tickets};
-//     for (size_t i = 0; i < TOPQ1; i++)
-//     {
-//         fputs(info[i],stream);
-//         switch (i)
-//         {
-//         case LASTQ1:
-//             fputs(ESCAPE_N,stream);
-//             break;
-        
-//         default:
-//             fputs(DELIM,stream);
-//             break;
-//         }
-//     }
-// }
+void writeQ1File(FILE * stream,Query1ADT query1){
+    //Header for Q1 .csv
+    fputs("Infraction;Tickets\n",stream);
+    
+    //Write rows for Q1 .csv
+    for (size_t i = 0; i < query1->dim; i++)
+        fprintf(stream,"%s;%ld\n",query1->infractionsVec[i].infractionName,query1->infractionsVec[i].count);
 
-// void HeaderQ2(FILE * stream){
-//     fputs("IssuingAgency;Infraction;Tickets\n",stream);
-// }
-
-// void writeRowQ2(FILE * stream,char * agency,char * id,char * Tickets){ // para obtener el nombre del id hay que invocarlo con q1
-//      char * info[]={agency,id,Tickets};
-//     for (size_t i = 0; i < TOPQ2; i++)
-//     {
-//         fputs(info[i],stream);
-//         switch (i)
-//         {
-//         case LASTQ2:
-//             fputs(ESCAPE_N,stream);
-//             break;
-        
-//         default:
-//             fputs(DELIM,stream);
-//             break;
-//         }
-//     }
-// }
-
-// FILE * newFile(char * name){
-//     errno = SET_ERRNO;
-//     FILE * file=fopen(name,WRITETEXT);
-//     if(errno != SET_ERRNO || file==NULL){
-//         perror("Ocurrio un error mientras se creaba algun archivo\n");
-//         exit (EXIT_FAILURE);
-//     }
-//     return file;
-// }
+    fclose(stream);
+}

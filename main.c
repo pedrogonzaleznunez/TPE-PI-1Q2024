@@ -5,6 +5,7 @@
 #include <string.h>
 #include <errno.h>
 #include "queries.h"
+#include "front.h"
 #include "main.h"
 
 #if FORMATNYC
@@ -76,7 +77,6 @@ void deleteChar(char *string, char toDeleteChar) {
     }
     string[j] = '\0'; // Agrega el terminador nulo al final de la cadena resultante
 }
-
 
 // @brief Reads infraction's file and inserts the data into the CDT. 
 // @param fileToRead File to read

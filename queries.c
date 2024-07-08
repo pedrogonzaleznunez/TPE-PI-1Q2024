@@ -186,7 +186,7 @@ void printInfractions(Query1ADT query1){
 
 
 //free query1
-static freeVec(TInfractions * vec,size_t dim){
+static void freeVec(TInfractions * vec,size_t dim){
     for(size_t idx=0; idx < dim; idx++){
         free(vec[idx].infractionName);
     }

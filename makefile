@@ -14,10 +14,12 @@ $(OUTPUT_FILE_NYC): mainNYC.o queriesNYC.o front.o
 $(OUTPUT_FILE_CHI): mainCHI.o queriesCHI.o front.o 
 	$(COMPILER) $(CFLAGS) mainCHI.o queriesCHI.o front.o -o $(OUTPUT_FILE_CHI)
 
-mainNYC.o: $(FRONT)
+# Cambié la regla mainNYC.o para que se compile queries.c primero.
+mainNYC.o: queriesNYC.o $(FRONT)
 	$(COMPILER) $(FORMATNYC) $(CFLAGS) -c $(FRONT) -o mainNYC.o
 
-mainCHI.o: $(FRONT)
+# Cambié la regla mainCHI.o para que se compile queries.c primero.
+mainCHI.o: queriesCHI.o $(FRONT)
 	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c $(FRONT) -o mainCHI.o
 
 queriesNYC.o: queries.c queries.h
@@ -26,8 +28,9 @@ queriesNYC.o: queries.c queries.h
 queriesCHI.o: queries.c queries.h
 	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c queries.c -o queriesCHI.o
 
-front.o: front.c front.h
+# Cambié la regla front.o para que se compile queries.c primero.
+front.o: queriesNYC.o queriesCHI.o front.c front.h
 	$(COMPILER) $(CFLAGS) -c front.c -o front.o
 
 clean:
-	rm -f *.o 
+	rm -f *.o
