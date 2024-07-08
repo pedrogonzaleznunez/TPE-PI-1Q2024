@@ -27,6 +27,7 @@ typedef struct Query1CDT{
     size_t size;                                       //amount of infractions
     char ** infractionsNames;
     size_t sizeNames;
+    size_t iter;                                      //iterator
 }Query1CDT;
 
 // ------------------------------------------------------------- //
@@ -48,7 +49,8 @@ typedef struct agencies{
 }TAgencies;
 
 typedef struct Query2CDT{
-    TListAgency first;                    //list of agencies
+    TListAgency first;                  //list of agencies
+    TListAgency iter;                
 }Query2CDT;
 
 // ------------------------------------------------------------- //
@@ -76,6 +78,7 @@ typedef Tinfraccion * TlistInfraccion;
 
 typedef struct Query3CDT{
     TlistInfraccion first;            //list of infractions in alphabetic order
+    TlistInfraccion iter;
 }Query3CDT;
 
 // ------------------------------------------------------------- //
@@ -310,7 +313,6 @@ Query3ADT newQuery3(void){
     return calloc(1, sizeof(Query3CDT));
 }
 
-
 // static TlistPlates addPlates(TlistPlates list,const char *plate, int * toCheck){
 //     int c;
 //     if(list==NULL || (c=strcmp(list->nameOfPlate,plate))>0){
@@ -430,10 +432,13 @@ void addTicket(Query1ADT query1, Query3ADT query3, char * plate,size_t infractio
 
 void printForQuery3(Query3ADT query3){
     TlistInfraccion aux=query3->first;
+    int contador=0;
     while(aux!=NULL){
         printf("%s;%s;%ld \n",aux->infraccionName,aux->MostPopularPlate,aux->maxTickets);
         aux=aux->nextInfraccion;
+        contador++;
     }
+    printf("Cantidad de infracciones: %d\n",contador);
 }
 
 static void freeSublist3(TlistPlates sublist){
@@ -461,6 +466,10 @@ static void freeList3(TlistInfraccion list){
 
 
 void freeInfraccion3(Query3ADT query3){
+    if(query3 == NULL){
+        return ;
+    }
+    
     freeList3(query3->first);
     free(query3);
 }
