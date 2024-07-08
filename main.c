@@ -62,9 +62,9 @@ int main(int argc, char const *argv[]){
     printForQuery3(query3,c);
 
     //Free resources
-    freeQuery1(query1);
     freeQ3(query3);
-    //freeQuery2(query2);
+    freeQuery1(query1);
+    freeQuery2(query2);
     return 0;
 }   
 

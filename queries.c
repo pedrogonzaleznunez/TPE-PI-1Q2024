@@ -57,7 +57,7 @@ typedef struct Query2CDT{
 // ------------------------------------------------------------- //
 
 typedef struct plate{
-    char * nameOfPlate;             //name of plate
+    char nameOfPlate[PLATE_LENGHT+1];             //name of plate
     size_t cantInfraccion;          //amount of tickets issued under plate nameOfPlate
     struct plate * tail;            //next plate in alphabetical order
 }Tplate;
@@ -67,7 +67,7 @@ typedef Tplate * TlistPlates;
 typedef struct infractions3{
     TlistPlates first ;                                             //ID of the infraction
     char * infractionName;   
-    char * mostPopularPlate;                                 //Name of the infraction              
+    char mostPopularPlate[PLATE_LENGHT+1];                                 //Name of the infraction              
     size_t maxTickets;                                                //amount of times that infraction has been done           
 }TInfractions3;
 
@@ -326,7 +326,6 @@ TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
         TlistPlates aux=malloc(sizeof(Tplate));
         aux->cantInfraccion=1;
         *cant=1;
-        aux->nameOfPlate=malloc(sizeof(char) * (strlen(plate)+1));
         strcpy(aux->nameOfPlate,plate);
         aux->tail=list;
         return aux;
@@ -351,35 +350,31 @@ void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate){
     query3->infractionsVec3[id-1].first=addPlate(query3->infractionsVec3[id-1].first,plate,&cant);
 
     if(cant > query3->infractionsVec3[id-1].maxTickets){
-        query3->infractionsVec3[id-1].mostPopularPlate=realloc(query3->infractionsVec3[id-1].mostPopularPlate,sizeof(char) * (strlen(plate)+1));
         strcpy(query3->infractionsVec3[id-1].mostPopularPlate,plate);
         query3->infractionsVec3[id-1].maxTickets=cant;
 
     }else if(cant == query3->infractionsVec3[id-1].maxTickets){
         if(strcmp(query3->infractionsVec3[id-1].mostPopularPlate,plate) > 0){
-            query3->infractionsVec3[id-1].mostPopularPlate=realloc(query3->infractionsVec3[id-1].mostPopularPlate,sizeof(char) * (strlen(plate)+1));
             strcpy(query3->infractionsVec3[id-1].mostPopularPlate,plate);
         }
     }
     return;
 }
 
-// static void freeList(TlistPlates list){
-//     if(list==NULL){
-//         return;
-//     }
-//     freeList(list->tail);
-    
-//     free(list->nameOfPlate);
-//     free(list);
-//     return;
-// }
+static void freeList3(TlistPlates list){
+    if(list==NULL){
+        return;
+    }
+    freeList3(list->tail);
+    free(list);
+    return;
+}
 
 static void freeVec3(TInfractions3 * vec,size_t dim){
-    // for(int i=0; i < dim; i++){
-    //     if(vec[i].first != NULL)
-    //         freeList(vec[i].first);
-    // }    
+    for(int i=0; i < dim; i++){
+        if(vec[i].first != NULL)
+            freeList3(vec[i].first);
+    }    
     free(vec);
     return ;
 }
@@ -404,6 +399,7 @@ int sortInfractionsDecreasingQuery3(Query3ADT query3){
     if(query3 == NULL)
         return 0;
     int dim = eliminaCeros(query3->dim,query3->infractionsVec3);
+    query3->dim=dim;
     qsort(query3->infractionsVec3, dim, sizeof(TInfractions3),(int (*)(const void *, const void *))comparator3);
     return dim;
 }
