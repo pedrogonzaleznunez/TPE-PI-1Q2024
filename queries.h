@@ -73,8 +73,9 @@ void printInfractions2(Query1ADT query1, Query2ADT query2);
 
 Query3ADT newQuery3(void);
 
-void addTicket(Query1ADT query1, Query3ADT query3, char * plate,size_t infractionID);
+void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate);
 
+void createVec3(Query1ADT query1, Query3ADT query3);
 //temporal function
 void printForQuery3(Query3ADT query3);
 

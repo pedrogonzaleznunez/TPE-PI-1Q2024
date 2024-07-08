@@ -39,7 +39,6 @@ typedef struct infractions2{
     size_t infractionsAmount;
 }TInfraction2;
 
-
 typedef struct agencies{
     char * agencyName;                  //name of the agency
     TInfraction2 *infractions;           //array of structures with type TInfraction
@@ -65,20 +64,16 @@ typedef struct plate{
 
 typedef Tplate * TlistPlates;
 
-typedef struct infraccion{
-    size_t idInfraccion;
-    char * infraccionName;                  //name of the infraction
-    TlistPlates plates;                     //list of plates in alphabetic order
-    char * MostPopularPlate;                //name of most popular issuer of infraction infractionName
-    size_t maxTickets;                      //amount of times that issuer mostPopularPlateName has done infraction infractionName
-    struct infraccion * nextInfraccion;     //next infraction in alphabetical order
-}Tinfraccion;
-
-typedef Tinfraccion * TlistInfraccion;
+typedef struct infractions3{
+    TlistPlates first ;                                             //ID of the infraction
+    char * infractionName;   
+    char * mostPopularPlate;                                 //Name of the infraction              
+    size_t maxTickets;                                                //amount of times that infraction has been done           
+}TInfractions3;
 
 typedef struct Query3CDT{
-    TlistInfraccion first;            //list of infractions in alphabetic order
-    TlistInfraccion iter;
+    TInfractions3 * infractionsVec3;                      //array of infractions
+    size_t dim;                                        //dimension of array                                      //amount of infractions
 }Query3CDT;
 
 // ------------------------------------------------------------- //
@@ -310,170 +305,96 @@ void printInfractions2(Query1ADT query1, Query2ADT query2){
 // ------------------------------------------------------------- //
 
 Query3ADT newQuery3(void){
-    return calloc(1, sizeof(Query3CDT));
+    Query3ADT aux= calloc(1,sizeof(Query3CDT));
+    return aux;
 }
+//takes infractionName from query1
+//creates a new infraction in query3
 
-// static TlistPlates addPlates(TlistPlates list,const char *plate, int * toCheck){
-//     int c;
-//     if(list==NULL || (c=strcmp(list->nameOfPlate,plate))>0){
-//         TlistPlates aux=malloc(sizeof(Tplate));
-//         aux->nameOfPlate=malloc((strlen(plate)+1) * sizeof(char));
-//         strcpy(aux->nameOfPlate,plate);
-//         aux->cantInfraccion=1;
-//         aux->tail=list;
-//         return aux;
-//     }
-//     if(c==0){
-//         list->cantInfraccion++;
-//         *toCheck=list->cantInfraccion;
-//         return list;
-//     }
-//     list->tail=addPlates(list->tail,plate,toCheck);
-//     return list;
-// }
-
-// static TlistInfraccion addInfraccion3(TlistInfraccion list,char * infractionName,int infraccionID,char * plate){
-//     int c;
-//     if(list==NULL || (c=strcmp(list->infraccionName,infractionName))>0){
-//         TlistInfraccion aux=malloc(sizeof(Tinfraccion));
-//         aux->idInfraccion=infraccionID;
-//         aux->nextInfraccion=list;
-//         aux->infraccionName=malloc((strlen(infractionName)+1)*sizeof(char));
-//         strcpy(aux->infraccionName,infractionName);
-//         aux->MostPopularPlate=malloc((strlen(plate)+1)*sizeof(char));
-//         strcpy(aux->MostPopularPlate,plate);
-//         int p = 0;
-//         aux->plates=NULL;
-//         aux->plates=addPlates(aux->plates,plate,&p);
-//         aux->maxTickets=p;
-//         return aux;
-//     }
-//     if(c==0){
-//         int maxInfrac=0;
-//         list->plates=addPlates(list->plates,plate,&maxInfrac);
-//         if(maxInfrac>list->maxTickets || (list->maxTickets==maxInfrac && (strcmp(list->MostPopularPlate,plate))>0)){
-//             list->maxTickets=maxInfrac;
-//             list->MostPopularPlate=realloc(list->MostPopularPlate,((strlen(plate))+1)* sizeof(char));
-//             strcpy(list->MostPopularPlate,plate);
-//         }
-//         return list;
-//     }
-//     list->nextInfraccion=addInfraccion3(list->nextInfraccion,infractionName,infraccionID,plate);
-//     return list;
-// }
-
-// void addTicket(Query1ADT query1, Query3ADT query3, char * plate,int infraccionID){
-//     if((query1!=NULL && plate!=NULL) && (infraccionID<=query1->sizeNames && query1->infractionsNames[infraccionID-1]!=NULL)){
-//         query3->first=addInfraccion3(query3->first,query1->infractionsNames[infraccionID-1],infraccionID,plate);
-//     }
-// }
-
-static TlistPlates addPlates(TlistPlates list,char * plate,size_t * toCheck ){
-    int c;
-    if(list==NULL || (c=strcmp(list->nameOfPlate,plate)) > 0){
-        TlistPlates aux=malloc(sizeof(Tplate));
-        aux->nameOfPlate=malloc((strlen(plate)+1)*sizeof(char));
-        strcpy(aux->nameOfPlate,plate);
-        aux->cantInfraccion=1;
-        *toCheck=1;
-        aux->tail=list;
-        return aux;
-    }
-    if(c<0){
-        list->tail=addPlates(list->tail,plate,toCheck);
-        return list;
-    }
-    list->cantInfraccion++;
-    *toCheck=list->cantInfraccion;
-    return list;
-}
-
-
-static TlistInfraccion addInfraction3(Query1ADT query1, TlistInfraccion list, char * infractionName,size_t infractionID,char * plate){
-int c;
-    if(list==NULL || (c=strcmp(list->infraccionName,infractionName))>0){
-        TlistInfraccion aux=malloc(sizeof(Tinfraccion));
-        aux->idInfraccion=infractionID;
-        aux->infraccionName=malloc((strlen(infractionName)+1)*sizeof(char));
-        strcpy(aux->infraccionName,infractionName);
-        aux->plates=NULL;
-        size_t cant;
-        aux->plates=addPlates(aux->plates,plate,&cant);
-        aux->MostPopularPlate=malloc((strlen(plate)+1)*sizeof(char));
-        strcpy(aux->MostPopularPlate,plate);
-        aux->maxTickets=cant;
-        aux->nextInfraccion=list;
-        return aux;
-    }
-    if(c<0){
-        list->nextInfraccion=addInfraction3(query1,list->nextInfraccion,infractionName,infractionID,plate);
-        return list;
-    }
-        size_t maxInfrac=0;
-        list->plates=addPlates(list->plates,plate,&maxInfrac);
-        if(list->maxTickets < maxInfrac){
-            list->maxTickets=maxInfrac;
-            list->MostPopularPlate=realloc(list->MostPopularPlate,(strlen(plate)+1)*sizeof(char));
-            strcpy(list->MostPopularPlate,plate);
-            return list;
-        }
-        if(maxInfrac == list->maxTickets){
-            int comp=strcmp(list->MostPopularPlate,plate);
-            if(comp > 0){
-                list->MostPopularPlate=realloc(list->MostPopularPlate,(strlen(plate)+1)*sizeof(char));
-                strcpy(list->MostPopularPlate,plate);
-            }
-        }
-        return list;
-}
-
-void addTicket(Query1ADT query1, Query3ADT query3, char * plate,size_t infractionID){
-    if((query1 != NULL && query3 != NULL) && ((infractionID <= query1->sizeNames && query1->infractionsNames[infractionID-1]!=NULL) && plate!=NULL)){
-        query3->first=addInfraction3(query1,query3->first,query1->infractionsNames[infractionID-1],infractionID,plate);
-    }
-}
-
-void printForQuery3(Query3ADT query3){
-    TlistInfraccion aux=query3->first;
-    int contador=0;
-    while(aux!=NULL){
-        printf("%s;%s;%ld \n",aux->infraccionName,aux->MostPopularPlate,aux->maxTickets);
-        aux=aux->nextInfraccion;
-        contador++;
-    }
-    printf("Cantidad de infracciones: %d\n",contador);
-}
-
-static void freeSublist3(TlistPlates sublist){
-    if(sublist == NULL){
-        return ;
-    }
-    freeSublist3(sublist->tail);
-    free(sublist->nameOfPlate);
-    free(sublist);
+void createVec3(Query1ADT query1, Query3ADT query3){
+    query3->infractionsVec3 = calloc(query1->dim, sizeof(TInfractions3));
+    query3->dim = query1->dim;
     return;
 }
 
-
-static void freeList3(TlistInfraccion list){
-    if(list == NULL){
-        return ;
+TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
+    int c;
+    if(list==NULL || (c=strcmp(list->nameOfPlate,plate) > 0)){
+        TlistPlates aux=malloc(sizeof(Tplate));
+        aux->cantInfraccion=1;
+        *cant=1;
+        aux->nameOfPlate=malloc(sizeof(char) * (strlen(plate)+1));
+        strcpy(aux->nameOfPlate,plate);
+        aux->tail=list;
+        return aux;
     }
-    freeList3(list->nextInfraccion);
-    freeSublist3(list->plates);
-    free(list->infraccionName);
-    free(list->MostPopularPlate);
+    if(c < 0){
+        list->tail=addPlate(list->tail,plate,cant);
+        return list;
+    }
+    list->cantInfraccion++;
+    *cant=list->cantInfraccion;
+    return list;
+}
+
+void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate){
+    //check if the id is valid
+    if(id > query1->dim || query1->infractionsNames[id-1]==NULL){
+        return;
+    }
+    int cant=0;
+    query3->infractionsVec3[id-1].infractionName=query1->infractionsNames[id-1];
+    query3->infractionsVec3[id-1].first=addPlate(query3->infractionsVec3[id-1].first,plate,&cant);
+    if(cant > query3->infractionsVec3[id-1].maxTickets){
+        query3->infractionsVec3[id-1].mostPopularPlate=realloc(query3->infractionsVec3[id-1].mostPopularPlate,sizeof(char) * (strlen(plate)+1));
+        strcpy(query3->infractionsVec3[id-1].mostPopularPlate,plate);
+        query3->infractionsVec3[id-1].maxTickets=cant;
+
+    }else if(cant == query3->infractionsVec3[id-1].maxTickets){
+        if(strcmp(query3->infractionsVec3[id-1].mostPopularPlate,plate) > 0){
+            query3->infractionsVec3[id-1].mostPopularPlate=realloc(query3->infractionsVec3[id-1].mostPopularPlate,sizeof(char) * (strlen(plate)+1));
+            strcpy(query3->infractionsVec3[id-1].mostPopularPlate,plate);
+        }
+    }
+    return;
+}
+
+static void freeList(TlistPlates list){
+    if(list==NULL){
+        return;
+    }
+    freeList(list->tail);
+    free(list->nameOfPlate);
     free(list);
     return;
 }
 
-
-void freeInfraccion3(Query3ADT query3){
-    if(query3 == NULL){
-        return ;
+static void freeVec(TInfractions3 * vec,size_t dim){
+    for(int i=0; i < dim; i++){
+        freelist(vec[i].first);
+        free(vec[i].infractionName);
+        free(vec[i].mostPopularPlate);
     }
-    
-    freeList3(query3->first);
-    free(query3);
+    free(vec);
+    return ;
 }
 
+void freeQ3(Query3ADT query3){
+    freeVec(query3->infractionsVec3,query3->dim);
+    free(query3);
+}
+void sortInfractionsDecreasingQuery3(Query3ADT query3){
+    if(query3 == NULL)
+        return;
+
+    qsort(query3->infractionsVec3, query3->dim, sizeof(TInfractions3),strcmp);
+    return;
+}
+
+void printForQuery3(Query3ADT query3){
+    int i;
+    for(i=0;i<query3->dim;i++){
+        printf("%s,%s,%ld \n",query3->infractionsVec3[i].infractionName,query3->infractionsVec3[i].mostPopularPlate,query3->infractionsVec3[i].maxTickets);
+    }
+    printf("contador: %d",i);
+}
