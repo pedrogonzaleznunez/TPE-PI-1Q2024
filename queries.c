@@ -195,12 +195,12 @@ void freeQuery1(Query1ADT query1){
 // ------------------------------------------------------------- //
 
 static void copyStr(TInfraction2 * vec,size_t infractionID,char * s){
-    vec[infractionID].infractionName= realloc(vec[infractionID].infractionName,(strlen(s) + 1));
-        if(vec[infractionID].infractionName == NULL){
+    vec[infractionID-1].infractionName= realloc(vec[infractionID-1].infractionName,(strlen(s) + 1));
+        if(vec[infractionID-1].infractionName == NULL){
             errno=ENOMEM;
             return;
         }
-        strcpy(vec[infractionID].infractionName,s);
+        strcpy(vec[infractionID-1].infractionName,s);
         return;
 }
 
@@ -295,7 +295,6 @@ static void freeList2(TListAgency list){
     }
     freeList2(list->tail);
     freeVec(list->infractions,list->dim);
-    free(list->infractions);
     return;
 }
 
