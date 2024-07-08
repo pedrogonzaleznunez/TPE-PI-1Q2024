@@ -167,7 +167,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
 
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
-        addTicket(query1,query3,atoi(id),plate);
+        addTicket(query1,query3,plate,atoi(id));
         addAgency(query1,query2,agency,atoi(id));
 
         lineCounter++;

@@ -339,8 +339,8 @@ static TlistInfraccion addInfraccion3(TlistInfraccion list,char * infractionName
         aux->infraccionName=malloc((strlen(infractionName)+1)*sizeof(char));
         strcpy(aux->infraccionName,infractionName);
         aux->MostPopularPlate=malloc((strlen(plate)+1)*sizeof(char));
-        strcpy(aux->infraccionName,plate);
-        int p;
+        strcpy(aux->MostPopularPlate,plate);
+        int p = 0;
         aux->plates=NULL;
         aux->plates=addPlates(aux->plates,plate,&p);
         aux->maxTickets=p;
@@ -360,7 +360,7 @@ static TlistInfraccion addInfraccion3(TlistInfraccion list,char * infractionName
     return list;
 }
 
-void addTIcket(Query1ADT query1, Query3ADT query3, char * plate,int infraccionID){
+void addTicket(Query1ADT query1, Query3ADT query3, char * plate,int infraccionID){
     if((query1!=NULL && plate!=NULL) && (infraccionID<=query1->sizeNames && query1->infractionsNames[infraccionID-1]!=NULL)){
         query3->first=addInfraccion3(query3->first,query1->infractionsNames[infraccionID-1],infraccionID,plate);
     }
