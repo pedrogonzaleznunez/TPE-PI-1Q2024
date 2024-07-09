@@ -329,7 +329,9 @@ static void freeList2(TListAgency list){
         return ;
     }
     freeList2(list->tail);
+    free(list->agencyName);
     free(list->infractions);
+    free(list);
     return;
 }
 
