@@ -36,8 +36,6 @@ int main(int argc, char const *argv[]){
         perror("Format error \n");
         exit(FORMAT_ERROR);
     }
-
-    int c, flag = 0;
     
     // [1st] Create CDTs
     Query1ADT query1 = newQuery1();
@@ -51,25 +49,27 @@ int main(int argc, char const *argv[]){
     
     // [3rd] Sort infractions
     ricardoSortQuery1(query1);
-    c = ricardoSortQuery3(query3);
-    // printInfractions(query1);
+    ricardoSortQuery3(query3);
 
     toBeginQ1(query1);
     toBeginQ2(query2);
     toBeginQ3(query3);
 
-    // printInfractions2(query1,query2);
-
     // [4th] Write files
-    // FILE * fileQ1 = newFile("query1.csv");
-    // writeQ1File(fileQ1,query1);
-    
+    writeQ1File(query1);
+    writeQ2File(query2,query1);
+    writeQ3File(query3,query1);
+
+    //printInfractions(query1);
+    // puts("\nQuery 2\n");
+    // printInfractions2(query1,query2);
+    // puts("\nQuery 3\n");
     // printForQuery3(query3,c);
 
     //Free resources
     freeQ3(query3);
-    freeQuery1(query1);
     freeQuery2(query2);
+    freeQuery1(query1);
     return 0;
 }   
 

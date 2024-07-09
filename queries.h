@@ -86,7 +86,7 @@ void freeInfraccion3(Query3ADT query3);
 
 void freeQ3(Query3ADT query3);
 
-int ricardoSortQuery3(Query3ADT query3);
+void ricardoSortQuery3(Query3ADT query3);
 
 // -------------------------------------------------------------- //
 // ------------------------- ITERATORS  ------------------------- //

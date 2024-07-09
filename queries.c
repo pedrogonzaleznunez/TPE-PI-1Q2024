@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include "main.h"
 
 #define MAX_LINE_LENGTH 100
 #define BLOCK 10
@@ -74,7 +75,8 @@ struct infractions3{
 typedef struct Query3CDT{
     TInfractions3 * infractionsVec3;                    //array of infractions
     size_t iter;                                        //iterator 
-    size_t dim;                                        //dimension of array                                      
+    size_t dim;                                        //dimension of array    
+    size_t dimSorted;                         
 }Query3CDT;
 
 // ------------------------------------------------------------- //
@@ -484,13 +486,12 @@ static int eliminaCeros(size_t dim, TInfractions3 * vec){
     return j;
 }
 
-int ricardoSortQuery3(Query3ADT query3){
+void ricardoSortQuery3(Query3ADT query3){
     if(query3 == NULL)
-        return 0;
-    int dim = eliminaCeros(query3->dim,query3->infractionsVec3);
-    query3->dim=dim;
-    qsort(query3->infractionsVec3, dim, sizeof(TInfractions3),(int (*)(const void *, const void *))comparator3);
-    return dim;
+        return;
+    query3->dim=eliminaCeros(query3->dim,query3->infractionsVec3);
+    qsort(query3->infractionsVec3, query3->dim, sizeof(TInfractions3),(int (*)(const void *, const void *))comparator3);
+    return;
 }
 
 void printForQuery3(Query3ADT query3, int dim){
@@ -521,7 +522,7 @@ int hasNextQ1(Query1ADT query1){
 }
 
 int hasNextQ2(Query2ADT query2){
-    return query2->first != NULL;
+    return query2->iter != NULL;
 }
 
 int hasNextQ3(Query3ADT query3){
@@ -560,3 +561,70 @@ TInfractions3 nextQ3(Query3ADT query3, int * flag){
     return aux;   
 }
 
+static FILE * newFile(char * name){
+    FILE * file=fopen(name,"wt");
+    if(errno != 0|| file==NULL){
+        perror("ERROR - Creating new file\n");
+        exit(EXIT_FAILURE);
+    }
+    return file;
+}
+
+void writeQ1File(Query1ADT query1){
+    //Header for Q1 .csv
+    FILE * streamQ1 = newFile("query1.csv");
+    fopen("query1.csv",WRITE);
+
+    fputs("infraction;tickets\n",streamQ1);
+    
+    //Write rows for Q1 .csv
+    int flag = 0;
+    TInfractions aux = nextQ1(query1,&flag);
+
+    while(!flag){
+        fprintf(streamQ1,"%s;%ld\n", aux.infractionName, aux.count);
+        aux = nextQ1(query1,&flag);
+    }
+
+    fclose(streamQ1);
+}
+
+
+void writeQ2File(Query2ADT query2, Query1ADT query1){
+    //Header for Q2 .csv
+    FILE * streamQ2 = newFile("query2.csv");
+    fopen("query2.csv",WRITE);
+
+    fputs("issuingAgency;infraccion;tickets\n",streamQ2);
+    
+    //Write rows for Q2 .csv
+    int flag = 0;
+    TListAgency aux = nextQ2(query2,&flag);
+
+    while(!flag){
+        fprintf(streamQ2,"%s;%s;%ld\n", aux->agencyName, query1->infractionsNames[aux->mostPopularID-1], aux->infractions[aux->mostPopularID-1].infractionsAmount);
+        aux = nextQ2(query2,&flag);
+    }
+
+    
+    fclose(streamQ2);
+}
+
+void writeQ3File(Query3ADT query3,Query1ADT query1){
+    //Header for Q3 .csv
+    FILE * streamQ3 = newFile("query3.csv");
+    fopen("query3.csv",WRITE);
+
+    fputs("infraccion;plate;tickets\n",streamQ3);
+    
+    //Write rows for Q3 .csv
+    int flag = 0;
+    TInfractions3 aux = nextQ3(query3,&flag);
+
+    while (!flag){
+        fprintf(streamQ3,"%s;%s;%ld\n", aux.infractionName, aux.mostPopularPlate, aux.maxTickets);
+        aux = nextQ3(query3,&flag);
+    }
+    
+    fclose(streamQ3);
+}

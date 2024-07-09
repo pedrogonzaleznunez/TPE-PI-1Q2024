@@ -27,7 +27,7 @@ queriesCHI.o: queries.c queries.h
 	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c queries.c -o queriesCHI.o
 
 front.o: queriesNYC.o queriesCHI.o front.c front.h
-	$(COMPILER) $(CFLAGS) -c front.c -o front.o
+	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c front.c -o front.o
 
 clean:
 	rm -f *.o && clear
