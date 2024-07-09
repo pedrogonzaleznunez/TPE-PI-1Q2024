@@ -22,6 +22,10 @@
 #define FORMAT_ERROR 1
 #define OPENING_FILE_ERROR 4
 #define ESCAPE_N "\n"
+#define TICKETS_FILE_NAME "tickets"
+#define INFRAC_FILE_NAME "infractions"
+#define TOTAL_ARGS 3
+
 
 void readInfractionsFile(char const argv[], Query1ADT query1, Query3ADT query3);
 void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3ADT query3);
@@ -32,11 +36,14 @@ void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3
 // @param argv path to infractions file
 // @return 0 if the program was executed successfully, error number otherwise
 int main(int argc, char const *argv[]){
-    if( argc != 3){
+    if( argc != TOTAL_ARGS){
         perror("Format error \n");
         exit(FORMAT_ERROR);
     }
-    
+    if( strstr(argv[1],TICKETS_FILE_NAME) == NULL || strstr(argv[2], INFRAC_FILE_NAME) == NULL){
+        perror("Format error\n");
+        exit(FORMAT_ERROR);
+    }
     // [1st] Create CDTs
     Query1ADT query1 = newQuery1();
     Query2ADT query2 = newQuery2();
