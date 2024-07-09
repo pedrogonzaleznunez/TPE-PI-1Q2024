@@ -83,12 +83,6 @@ typedef struct Query3CDT{
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
 
-/**
-// * @brief Comparator function for qsort in query1
-// * @param a First element to compare
-// * @param b Second element to compare
-// * @return 0 if a and b are equal, a positive number if a is greater than b, a negative number if a is less than b
-*/
 static int comparator1(TInfractions * a, TInfractions * b){
     int cmp = b->count - a->count;
     
@@ -96,22 +90,13 @@ static int comparator1(TInfractions * a, TInfractions * b){
         cmp = strcmp(a->infractionName,b->infractionName);
     return cmp;
 }
-/**
-// * @brief Creates a new Query1ADT
-// * @return Query1ADT
-*/
+
 Query1ADT newQuery1(void){
     return calloc(1, sizeof(Query1CDT));
 }
 
 
-/**
- * @brief Adds a new infraction to the array of infractions
- * @param query1 Query1ADT
- * @param id ID of the infraction
- * @param InfractionName name of the infraction
- * @precondition query1 != NULL
- */
+
 void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
     errno= SET_ERRNO;
     if(query1 == NULL){
@@ -158,12 +143,7 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
 
     return;
 }
-/**
-// * @brief Adds an ocurrence to the infraction with id
-// * @param query1 Query1ADT
-// * @param id ID of the infraction
-// * @precondition query1 != NULL
-*/
+
 void addInfractionsOcurrences(Query1ADT query1, unsigned id){
     errno=SET_ERRNO;
     if(query1 == NULL || id > query1->dim){
@@ -174,11 +154,7 @@ void addInfractionsOcurrences(Query1ADT query1, unsigned id){
     query1->infractionsVec[id-1].count++;
     return;
 }
-/** 
-// * @brief Sorts the array of infractions in decreasing order
-// * @param query1 Query1ADT
-// * @precondition query1 != NULL
-*/
+
 void ricardoSortQuery1(Query1ADT query1){
     errno=SET_ERRNO;
     if(query1 == NULL){
@@ -207,10 +183,7 @@ static void freeVec(TInfractions * vec,size_t dim){
     free(vec);
     return ;
 }
-/**
- * @brief frees allocted memory
- * @param query1 Query1ADT
- */
+
 void freeQuery1(Query1ADT query1){
     if(query1 == NULL)
         return;
@@ -223,10 +196,6 @@ void freeQuery1(Query1ADT query1){
 // ------------------- FUNCTIONS FOR QUERY 2 ------------------- //
 // ------------------------------------------------------------- //
 
-/**
-// * @brief Creates a new Query1ADT
-// * @return Query1ADT
-*/
 Query2ADT newQuery2(void){
     return calloc(1,sizeof(Query2CDT));
 }
@@ -264,12 +233,6 @@ static TListAgency addAgencyRec(Query1ADT query1, TListAgency agencies, char * n
         
 }
 
-/**
-// * @brief Adds infraction into Agency
-// * @param query1 Query1ADT
-// * @param first Agency to insert the infraction in
-// * @param infractionID id of infraction
-*/
 void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
     if(query1 == NULL || first == NULL){
         return;
@@ -307,13 +270,7 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
 
     return;
 }
-/**
-// * @brief Adds an agency in alphabetical order
-// * @param query1 Query1ADT
-// * @param query2 Query2ADT
-// * @param nameOfAgency name of agency
-// * @param infractionID  ID of infractions
-*/
+
 void addAgency(Query1ADT query1,Query2ADT query2, char * nameOfAgency, size_t infractionID){    
     if( query1 == NULL || query2 == NULL ||  query1->sizeNames < infractionID || query1->infractionsNames[infractionID-1] == NULL){
         return;
@@ -335,10 +292,6 @@ static void freeList2(TListAgency list){
     return;
 }
 
-/**
-// * @brief frees allocated memory
-// * @param query2 Query2ADT
-*/
 void freeQuery2(Query2ADT query2){
     freeList2(query2->first);
     free(query2);
@@ -358,30 +311,15 @@ void printInfractions2(Query1ADT query1, Query2ADT query2){
 // ------------------- FUNCTIONS FOR QUERY 3 ------------------- //
 // ------------------------------------------------------------- //
 
-/**
-// * @brief Comparator function for qsort in query3
-// * @param a First element to compare
-// * @param b Second element to compare
-// * @return 0 if a and b are equal, a positive number if a is greater than b, a negative number if a is less than b
-*/
-int comparator3(TInfractions3 * a, TInfractions3 * b){
+static int comparator3(TInfractions3 * a, TInfractions3 * b){
     return strcmp(a->infractionName,b->infractionName);
 }
 
-/**
-// * @brief Creates a new Query3ADT
-// * @return Query3ADT
-*/
 Query3ADT newQuery3(void){
     Query3ADT aux = calloc(1,sizeof(Query3CDT));
     return aux;
 }
-//takes infractionName from query1
-/**
-// * @brief Creates a new infraction in query3
-// * @param query1 Query1ADT
-// * @param query3 Query3ADT
-*/
+
 void createVec3(Query1ADT query1, Query3ADT query3){
     errno=SET_ERRNO;
     query3->infractionsVec3 = calloc(query1->dim, sizeof(TInfractions3));
@@ -391,14 +329,8 @@ void createVec3(Query1ADT query1, Query3ADT query3){
     query3->dim = query1->dim;
     return;
 }
-/**
-// * @brief inserts a plate 
-// * @param list list of plates
-// * @param plate name of plate
-// * @param cant flag of amount of ocurrences
-// * @return TlistPlates
-*/
-TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
+
+static TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
     int c;
     if(list==NULL || (c=strcmp(list->nameOfPlate,plate) > 0)){
         TlistPlates aux=malloc(sizeof(Tplate));
@@ -420,13 +352,7 @@ TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
     *cant=list->cantInfraccion;
     return list;
 }
-/**
-// * @brief adds an infraction to query3
-// * @param query1 query1ADT
-// * @param query3 Query3ADT
-// * @param id ID of infraction
-// * @param plate Name of plate
-*/
+
 void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate){
     //check if the id is valid
     errno=SET_ERRNO;
@@ -468,11 +394,8 @@ static void freeVec3(TInfractions3 * vec,size_t dim){
     free(vec);
     return ;
 }
-/**
-// * @brief frees allocated memory
-// * @param query3 Query3ADT
-*/
-void freeQ3(Query3ADT query3){
+
+void freeQuery3(Query3ADT query3){
     freeVec3(query3->infractionsVec3,query3->dim);
     free(query3);
 }

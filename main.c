@@ -23,7 +23,7 @@
 #define OPENING_FILE_ERROR 4
 #define ESCAPE_N "\n"
 
-void readInfractionsFile(char const argv[], Query1ADT query1);
+void readInfractionsFile(char const argv[], Query1ADT query1, Query3ADT query3);
 void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3ADT query3);
 
 // @brief Main function
@@ -43,8 +43,7 @@ int main(int argc, char const *argv[]){
     Query3ADT query3 = newQuery3();
 
     // [2nd] Read files
-    readInfractionsFile(argv[INFRACTIONS_FILE],query1);
-    createVec3(query1,query3);
+    readInfractionsFile(argv[INFRACTIONS_FILE],query1, query3);
     readTicketsFile(argv[TICKETS_FILE],query1,query2,query3);
     
     // [3rd] Sort infractions
@@ -60,14 +59,8 @@ int main(int argc, char const *argv[]){
     writeQ2File(query2,query1);
     writeQ3File(query3,query1);
 
-    //printInfractions(query1);
-    // puts("\nQuery 2\n");
-    // printInfractions2(query1,query2);
-    // puts("\nQuery 3\n");
-    // printForQuery3(query3,c);
-
-    //Free resources
-    freeQ3(query3);
+    // [5th] Free resources
+    freeQuery3(query3);
     freeQuery2(query2);
     freeQuery1(query1);
     return 0;
@@ -87,7 +80,7 @@ void deleteChar(char *string, char toDeleteChar) {
 
 // @brief Reads infraction's file and inserts the data into the CDT. 
 // @param fileToRead File to read
-void readInfractionsFile(char const * argv, Query1ADT query1){
+void readInfractionsFile(char const * argv, Query1ADT query1, Query3ADT query3){
 
     FILE *file = fopen(argv, READ);
 
@@ -128,6 +121,7 @@ void readInfractionsFile(char const * argv, Query1ADT query1){
         
         lineCounter++;
     }
+    createVec3(query1,query3);
     fclose(file);
     return;
 }
