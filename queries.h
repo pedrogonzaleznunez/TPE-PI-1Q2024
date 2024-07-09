@@ -2,6 +2,7 @@
 #define __QUERIES_H_
 #include <stdlib.h>
 
+
 // #define DESCRIP_INFRAC_LENGHT 0
 // #define ISSUING_AGENCY_LENGHT 0
 // #define PLATE_LENGHT 0
@@ -36,6 +37,7 @@ typedef struct Query3CDT * Query3ADT;
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
+typedef struct infractions1 TInfractions;
 
 Query1ADT newQuery1(void);
 
@@ -70,6 +72,7 @@ void printInfractions2(Query1ADT query1, Query2ADT query2);
 // ------------------------------------------------------------- //
 // ------------------- FUNCTIONS FOR QUERY 3 ------------------- //
 // ------------------------------------------------------------- //
+typedef struct infractions3 TInfractions3;
 
 Query3ADT newQuery3(void);
 
@@ -97,8 +100,10 @@ int hasNextQ1(Query1ADT query1);
 int hasNextQ2(Query2ADT query2);
 int hasNextQ3(Query3ADT query3);
 
-TInfractions nextQ1(Query1ADT query1);
-TListAgency nextQ2(Query2ADT query2);
-TInfractions3 nextQ3(Query3ADT query3);
+TInfractions nextQ1(Query1ADT query1, int * flag);
+TListAgency nextQ2(Query2ADT query2, int * flag);
+TInfractions3 nextQ3(Query3ADT query3, int * flag);
+
 
 #endif
+

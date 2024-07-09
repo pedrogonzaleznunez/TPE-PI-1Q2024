@@ -15,31 +15,31 @@ static FILE * newFile(char * name){
 
 void writeQ1File(Query1ADT query1){
     //Header for Q1 .csv
-    FILE * stream = newFile("query1.csv");
-    fputs("infraction;tickets\n",stream);
+    FILE * streamQ1 = newFile("query1.csv");
+    fputs("infraction;tickets\n",streamQ1);
     
     //Write rows for Q1 .csv
-    fclose(stream);
+    fclose(streamQ1);
 }
 
 void writeQ2File(FILE * stream,Query2ADT query2){
     //Header for Q2 .csv
-    FILE * stream = newFile("query2.csv");
-    fputs("issuingAgency;infraccion;tickets\n",stream);
+    FILE * streamQ2 = newFile("query2.csv");
+    fputs("issuingAgency;infraccion;tickets\n",streamQ2);
     
     //Write rows for Q2 .csv
     
-    fclose(stream);
+    fclose(streamQ2);
 }
 
 void writeQ3File(FILE * stream,Query3ADT query3){
     //Header for Q2 .csv
-    FILE * stream = newFile("query3.csv");
-    fputs("infraccion;plate;tickets\n",stream);
+    FILE * streamQ3 = newFile("query3.csv");
+    fputs("infraccion;plate;tickets\n",streamQ3);
     
     //Write rows for Q2 .csv
     
-    fclose(stream);
+    fclose(streamQ3);
 }
 
 

@@ -15,11 +15,11 @@
 // ------------------- STRUCTURE FOR QUERY 1 ------------------- //
 // ------------------------------------------------------------- //
 
-typedef struct infractions1{
+struct infractions1{
     unsigned id;                                                //ID of the infraction
     char * infractionName;                                      //Name of the infraction              
     long count;                                                 //amount of times that infraction has been done           
-}TInfractions;
+};
 
 typedef struct Query1CDT{
     TInfractions * infractionsVec;                      //array of infractions
@@ -64,12 +64,12 @@ typedef struct plate{
 
 typedef Tplate * TlistPlates;
 
-typedef struct infractions3{
+struct infractions3{
     TlistPlates first ;                                             //ID of the infraction
     char * infractionName;   
     char mostPopularPlate[PLATE_LENGHT+1];                                 //Name of the infraction              
     size_t maxTickets;                                                //amount of times that infraction has been done           
-}TInfractions3;
+};
 
 typedef struct Query3CDT{
     TInfractions3 * infractionsVec3;                    //array of infractions
@@ -530,15 +530,17 @@ int hasNextQ3(Query3ADT query3){
 
 TInfractions nextQ1(Query1ADT query1, int * flag){
     if(!hasNextQ1(query1)){
-        return ;
+        *flag = 1;
+        return query1->infractionsVec[0];
     }
     TInfractions aux = query1->infractionsVec[query1->iter];
     query1->iter++;
     return aux;
 }
 
-TListAgency nextQ2(Query2ADT query2){ 
+TListAgency nextQ2(Query2ADT query2, int * flag){ 
     if(!hasNextQ2(query2)){
+        *flag = 1;
         return NULL;
     }
     TListAgency aux = query2->iter;
@@ -547,9 +549,10 @@ TListAgency nextQ2(Query2ADT query2){
 }
  
 
-TInfractions3 nextQ3(Query3ADT query3){
+TInfractions3 nextQ3(Query3ADT query3, int * flag){
     if(!hasNextQ3(query3)){
-        return ;
+        *flag = 1;
+        return query3->infractionsVec3[0];
     }
     
     TInfractions3 aux = query3->infractionsVec3[query3->iter];
@@ -557,8 +560,3 @@ TInfractions3 nextQ3(Query3ADT query3){
     return aux;   
 }
 
-// ------------------------------------------------------------- //
-
-/* Le devuelve al usuario el siguiente.
- * La primer llamada posterior a toBegin retorna el primer elemento
- */
