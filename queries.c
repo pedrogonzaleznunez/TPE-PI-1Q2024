@@ -531,102 +531,43 @@ int hasNextQ3(Query3ADT query3){
     return query3->iter < query3->dim;
 }
 
-TInfractions nextQ1(Query1ADT query1, int * flag){
+query1Iterator nextQ1(Query1ADT query1, int * flag){
+    query1Iterator aux = {NULL, 0};
     if(!hasNextQ1(query1)){
         *flag = 1;
-        return query1->infractionsVec[0];
+        return aux;
     }
-    TInfractions aux = query1->infractionsVec[query1->iter];
+    aux.count = query1->infractionsVec[query1->iter].count;
+    aux.infractionName = query1->infractionsVec[query1->iter].infractionName;
     query1->iter++;
     return aux;
 }
 
-TListAgency nextQ2(Query2ADT query2, int * flag){ 
+query2Iterator nextQ2(Query2ADT query2, Query1ADT query1, int * flag){ 
+    query2Iterator toReturn = {NULL, NULL, 0};
     if(!hasNextQ2(query2)){
         *flag = 1;
-        return NULL;
+        return toReturn;
     }
-    TListAgency aux = query2->iter;
-    query2->iter = query2->iter->tail;
-    return aux;
-}
- 
+    toReturn.agencyName = query2->iter->agencyName;
+    toReturn.infractions = query1->infractionsNames[query2->iter->mostPopularID-1];
+    toReturn.mostPopularID = query2->iter->mostPopularID;
 
-TInfractions3 nextQ3(Query3ADT query3, int * flag){
+    query2->iter = query2->iter->tail;
+    return toReturn;
+}
+
+query3Iterator nextQ3(Query3ADT query3, int * flag){
+    query3Iterator aux = {NULL, NULL, 0};
     if(!hasNextQ3(query3)){
         *flag = 1;
-        return query3->infractionsVec3[0];
+        return aux;
     }
-    
-    TInfractions3 aux = query3->infractionsVec3[query3->iter];
+    aux.mostPopularPlate = query3->infractionsVec3[query3->iter].mostPopularPlate;
+    aux.infractionName = query3->infractionsVec3[query3->iter].infractionName;
+    aux.maxTickets = query3->infractionsVec3[query3->iter].maxTickets;
+
     query3->iter++;
     return aux;   
 }
 
-static FILE * newFile(char * name){
-    FILE * file=fopen(name,"wt");
-    if(errno != 0|| file==NULL){
-        perror("ERROR - Creating new file\n");
-        exit(EXIT_FAILURE);
-    }
-    return file;
-}
-
-void writeQ1File(Query1ADT query1){
-    //Header for Q1 .csv
-    FILE * streamQ1 = newFile("query1.csv");
-    fopen("query1.csv",WRITE);
-
-    fputs("infraction;tickets\n",streamQ1);
-    
-    //Write rows for Q1 .csv
-    int flag = 0;
-    TInfractions aux = nextQ1(query1,&flag);
-
-    while(!flag){
-        fprintf(streamQ1,"%s;%ld\n", aux.infractionName, aux.count);
-        aux = nextQ1(query1,&flag);
-    }
-
-    fclose(streamQ1);
-}
-
-
-void writeQ2File(Query2ADT query2, Query1ADT query1){
-    //Header for Q2 .csv
-    FILE * streamQ2 = newFile("query2.csv");
-    fopen("query2.csv",WRITE);
-
-    fputs("issuingAgency;infraccion;tickets\n",streamQ2);
-    
-    //Write rows for Q2 .csv
-    int flag = 0;
-    TListAgency aux = nextQ2(query2,&flag);
-
-    while(!flag){
-        fprintf(streamQ2,"%s;%s;%ld\n", aux->agencyName, query1->infractionsNames[aux->mostPopularID-1], aux->infractions[aux->mostPopularID-1].infractionsAmount);
-        aux = nextQ2(query2,&flag);
-    }
-
-    
-    fclose(streamQ2);
-}
-
-void writeQ3File(Query3ADT query3,Query1ADT query1){
-    //Header for Q3 .csv
-    FILE * streamQ3 = newFile("query3.csv");
-    fopen("query3.csv",WRITE);
-
-    fputs("infraccion;plate;tickets\n",streamQ3);
-    
-    //Write rows for Q3 .csv
-    int flag = 0;
-    TInfractions3 aux = nextQ3(query3,&flag);
-
-    while (!flag){
-        fprintf(streamQ3,"%s;%s;%ld\n", aux.infractionName, aux.mostPopularPlate, aux.maxTickets);
-        aux = nextQ3(query3,&flag);
-    }
-    
-    fclose(streamQ3);
-}

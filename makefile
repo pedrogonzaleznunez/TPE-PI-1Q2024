@@ -30,4 +30,4 @@ front.o: queriesNYC.o queriesCHI.o front.c front.h
 	$(COMPILER) $(FORMATCHI) $(CFLAGS) -c front.c -o front.o
 
 clean:
-	rm -f *.o && clear
+	rm -f *.o && rm -f $(OUTPUT_FILE_NYC) $(OUTPUT_FILE_CHI) && clear

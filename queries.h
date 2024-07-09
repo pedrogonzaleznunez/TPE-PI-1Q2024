@@ -92,6 +92,23 @@ void ricardoSortQuery3(Query3ADT query3);
 // ------------------------- ITERATORS  ------------------------- //
 // -------------------------------------------------------------- //
 
+typedef struct query1Iterator{
+    char * infractionName;
+    unsigned long count;
+}query1Iterator;
+
+typedef struct query2Iterator{
+    char * agencyName;
+    char * infractions;
+    unsigned mostPopularID;
+}query2Iterator;
+
+typedef struct query3Iterator{
+    char * infractionName;
+    char * mostPopularPlate;
+    unsigned long maxTickets;
+}query3Iterator;
+
 void toBeginQ1(Query1ADT query1);
 void toBeginQ2(Query2ADT query2);
 void toBeginQ3(Query3ADT query3);
@@ -100,10 +117,8 @@ int hasNextQ1(Query1ADT query1);
 int hasNextQ2(Query2ADT query2);
 int hasNextQ3(Query3ADT query3);
 
-TInfractions nextQ1(Query1ADT query1, int * flag);
-TListAgency nextQ2(Query2ADT query2, int * flag);
-TInfractions3 nextQ3(Query3ADT query3, int * flag);
-
+query1Iterator nextQ1(Query1ADT query1, int * flag);
+query2Iterator nextQ2(Query2ADT query2, Query1ADT query1, int * flag);
+query3Iterator nextQ3(Query3ADT query3, int * flag);
 
 #endif
-
