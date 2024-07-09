@@ -20,7 +20,7 @@
 #define MAX_LINE_LENGTH 100
 #define SET_ERRNO 0
 #define FORMAT_ERROR 1
-#define OPENING_FILE_ERROR 2
+#define OPENING_FILE_ERROR 4
 #define ESCAPE_N "\n"
 #define WRITETEXT "wt"
 
@@ -34,7 +34,7 @@ void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3
 // @return 0 if the program was executed successfully, error number otherwise
 int main(int argc, char const *argv[]){
     if( argc != 3){
-        perror("Usage: ./parkingTickets### <tickets_file> <infractions_file>");
+        perror("Format error \n");
         exit(FORMAT_ERROR);
     }
 
@@ -88,7 +88,7 @@ void readInfractionsFile(char const * argv, Query1ADT query1){
 
     //check if the file was opened correctly
     if (file == NULL){
-        perror("[ERROR] Error opening file");
+        perror("Error opening file\n");
         exit(OPENING_FILE_ERROR);
     }
 
@@ -133,7 +133,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
 
     //check if the file was opened correctly
     if (file == NULL){
-        perror("[ERROR] Error opening file");
+        perror("Error opening file \n");
         exit(OPENING_FILE_ERROR);
     }
 

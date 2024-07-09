@@ -8,8 +8,8 @@
 #define MAX_LINE_LENGTH 100
 #define BLOCK 10
 #define SET_ERRNO 0
-#define TRUE 1
-#define FALSE !TRUE
+#define INVALID_ACCESS_MEM 2
+#define FAILED_TO_RESERVE_MEM 3
 
 // ------------------------------------------------------------- //
 // ------------------- STRUCTURE FOR QUERY 1 ------------------- //
@@ -106,14 +106,16 @@ Query1ADT newQuery1(void){
 // * @precondition query1 != NULL
 void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
     errno= SET_ERRNO;
-    if(query1 == NULL)
+    if(query1 == NULL){
+        errno=FAILED_TO_RESERVE_MEM;
         return;
+    }
     
     //check if the array is full, if so, realloc for more space
     if(query1->dim % BLOCK == 0){
         query1->infractionsVec = realloc(query1->infractionsVec, (query1->dim + BLOCK) * sizeof(TInfractions));
         if(query1->infractionsVec == NULL){
-            errno=ENOMEM;
+            errno=FAILED_TO_RESERVE_MEM;
             return ;
         }
         query1->size += BLOCK;
@@ -123,7 +125,7 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
     if(query1->sizeNames < id){
         query1->infractionsNames = realloc(query1->infractionsNames, (id) * sizeof(char *));
         if(query1->infractionsNames == NULL){
-            errno=ENOMEM;
+            errno=FAILED_TO_RESERVE_MEM;
             return ;
         }
         for(int i = query1->sizeNames; i < id; i++){
@@ -139,7 +141,7 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
 
     query1->infractionsVec[query1->dim-1].infractionName = malloc(( DESCRIP_INFRAC_LENGHT + 2) * sizeof(char));
     if(query1->infractionsVec[query1->dim-1].infractionName == NULL){
-            errno=ENOMEM;
+            errno=FAILED_TO_RESERVE_MEM;
             return ;
         }
     strcpy(query1->infractionsVec[query1->dim-1].infractionName, infractionName);
@@ -154,8 +156,11 @@ void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
 // * @param id ID of the infraction
 // * @precondition query1 != NULL
 void addInfractionsOcurrences(Query1ADT query1, unsigned id){
-    if(query1 == NULL || id > query1->dim)
+    errno=SET_ERRNO;
+    if(query1 == NULL || id > query1->dim){
+        errno=INVALID_ACCESS_MEM;
         return;
+    }
     
     query1->infractionsVec[id-1].count++;
     return;
@@ -165,8 +170,11 @@ void addInfractionsOcurrences(Query1ADT query1, unsigned id){
 // * @param query1 Query1ADT
 // * @precondition query1 != NULL
 void sortInfractionsDecreasing(Query1ADT query1){
-    if(query1 == NULL)
+    errno=SET_ERRNO;
+    if(query1 == NULL){
+        errno=FAILED_TO_RESERVE_MEM;
         return;
+    }
 
     qsort(query1->infractionsVec, query1->dim, sizeof(TInfractions),(int (*)(const void *, const void *))comparator1);
     return;
@@ -212,7 +220,15 @@ static TListAgency addAgencyRec(Query1ADT query1, TListAgency agencies, char * n
     int d;
     if(agencies == NULL || (d=strcmp(agencies->agencyName,nameOfAgency))>0){
         TListAgency new = malloc(sizeof(TAgencies));
+        if(new == NULL){
+            errno=FAILED_TO_RESERVE_MEM;
+            return agencies;
+        }
         new->agencyName = malloc((strlen(nameOfAgency) + 1)* sizeof(char));
+        if(new == NULL){
+            errno=FAILED_TO_RESERVE_MEM;
+            return agencies;
+        }
         strcpy(new->agencyName,nameOfAgency);
         new->infractions = NULL;
         new->tail = agencies;
@@ -240,6 +256,10 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
     if(first->dim < infractionID){
 
         first->infractions = realloc(first->infractions,infractionID * sizeof(TInfraction2));
+        if(first->infractions == NULL){
+            errno=FAILED_TO_RESERVE_MEM;
+            return ;
+        }
 
         for(size_t i = first->dim; i < infractionID; i++){
             first->infractions[i].infractionName = NULL;
@@ -315,7 +335,11 @@ Query3ADT newQuery3(void){
 //creates a new infraction in query3
 
 void createVec3(Query1ADT query1, Query3ADT query3){
+    errno=SET_ERRNO;
     query3->infractionsVec3 = calloc(query1->dim, sizeof(TInfractions3));
+    if(query3->infractionsVec3 == NULL){
+        errno=FAILED_TO_RESERVE_MEM;
+    }
     query3->dim = query1->dim;
     return;
 }
@@ -324,6 +348,10 @@ TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
     int c;
     if(list==NULL || (c=strcmp(list->nameOfPlate,plate) > 0)){
         TlistPlates aux=malloc(sizeof(Tplate));
+        if(aux == NULL){
+            errno=FAILED_TO_RESERVE_MEM;
+            return list;
+        }
         aux->cantInfraccion=1;
         *cant=1;
         strcpy(aux->nameOfPlate,plate);
@@ -341,7 +369,9 @@ TlistPlates addPlate(TlistPlates list, char * plate, int * cant){
 
 void addInfraction3(Query1ADT query1,Query3ADT query3,int id,char * plate){
     //check if the id is valid
+    errno=SET_ERRNO;
     if(id > query1->dim || query1->infractionsNames[id-1]==NULL){
+        errno=INVALID_ACCESS_MEM;
         return;
     }
     int cant=0;
