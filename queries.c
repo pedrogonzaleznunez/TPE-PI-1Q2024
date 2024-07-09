@@ -37,7 +37,7 @@ typedef struct Query1CDT{
 
 typedef struct infractions2{
     char * infractionName;
-    size_t infractionsAmount;
+    unsigned long infractionsAmount;
 }TInfraction2;
 
 typedef struct agencies{
@@ -94,8 +94,6 @@ static int comparator1(TInfractions * a, TInfractions * b){
 Query1ADT newQuery1(void){
     return calloc(1, sizeof(Query1CDT));
 }
-
-
 
 void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName){
     errno= SET_ERRNO;
@@ -164,16 +162,6 @@ void ricardoSortQuery1(Query1ADT query1){
 
     qsort(query1->infractionsVec, query1->dim, sizeof(TInfractions),(int (*)(const void *, const void *))comparator1);
     return;
-}
-
-void printInfractions(Query1ADT query1){
-    if(query1 == NULL)
-        return;
-    for(int i = 0; i < query1->dim; i++){
-        if(query1->infractionsVec[i].count > 0){
-            printf("%s: %ld\n", query1->infractionsVec[i].infractionName, query1->infractionsVec[i].count);
-        }
-    }
 }
 
 static void freeVec(TInfractions * vec,size_t dim){
@@ -256,6 +244,9 @@ void addInfraction2(Query1ADT query1,TListAgency first,size_t infractionID){
     }
 
     //add ocurrence of infraction, as it exists
+    if(first->infractions[infractionID-1].infractionName == NULL){
+        first->infractions[infractionID-1].infractionName = query1->infractionsNames[infractionID-1];
+    }
     first->infractions[infractionID-1].infractionsAmount++;
 
     //check if it is the most popular infraction
@@ -295,15 +286,6 @@ static void freeList2(TListAgency list){
 void freeQuery2(Query2ADT query2){
     freeList2(query2->first);
     free(query2);
-    return;
-}
-
-void printInfractions2(Query1ADT query1, Query2ADT query2){
-    TListAgency aux = query2->first;
-    while(aux != NULL){
-        printf("%s;%s;%ld\n",aux->agencyName,query1->infractionsNames[aux->mostPopularID-1],aux->infractions[aux->mostPopularID-1].infractionsAmount);
-        aux = aux->tail;
-    }
     return;
 }
 
@@ -419,13 +401,6 @@ void ricardoSortQuery3(Query3ADT query3){
     return;
 }
 
-void printForQuery3(Query3ADT query3, int dim){
-    int i;
-    for(i=0;i<dim;i++){
-        printf("%s;%s;%ld \n",query3->infractionsVec3[i].infractionName,query3->infractionsVec3[i].mostPopularPlate,query3->infractionsVec3[i].maxTickets);     
-    }
-}
-
 // ------------------------------------------------------------- //
 // ------------------------- ITERATORS ------------------------- //
 // ------------------------------------------------------------- //
@@ -473,8 +448,8 @@ query2Iterator nextQ2(Query2ADT query2, Query1ADT query1, int * flag){
         return toReturn;
     }
     toReturn.agencyName = query2->iter->agencyName;
-    toReturn.infractions = query1->infractionsNames[query2->iter->mostPopularID-1];
-    toReturn.mostPopularID = query2->iter->mostPopularID;
+    toReturn.infractions = query2->iter->infractions[query2->iter->mostPopularID-1].infractionName;
+    toReturn.mostPopularID = query2->iter->infractions[query2->iter->mostPopularID-1].infractionsAmount;
 
     query2->iter = query2->iter->tail;
     return toReturn;
