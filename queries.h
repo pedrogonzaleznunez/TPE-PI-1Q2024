@@ -43,7 +43,7 @@ void addInfractionsOcurrences(Query1ADT query1, unsigned id);
 
 void addInfractionsToVec(Query1ADT query1, unsigned id, char * infractionName);
 
-void sortInfractionsDecreasing(Query1ADT query1);
+void ricardoSortQuery1(Query1ADT query1);
 
 //temporal function
 void printInfractions(Query1ADT query1);
@@ -83,10 +83,22 @@ void freeInfraccion3(Query3ADT query3);
 
 void freeQ3(Query3ADT query3);
 
-int sortInfractionsDecreasingQuery3(Query3ADT query3);
+int ricardoSortQuery3(Query3ADT query3);
 
 // -------------------------------------------------------------- //
-// -------------------- AUXILIARY FUNCTIONS  -------------------- //
+// ------------------------- ITERATORS  ------------------------- //
 // -------------------------------------------------------------- //
+
+void toBeginQ1(Query1ADT query1);
+void toBeginQ2(Query2ADT query2);
+void toBeginQ3(Query3ADT query3);
+
+int hasNextQ1(Query1ADT query1);
+int hasNextQ2(Query2ADT query2);
+int hasNextQ3(Query3ADT query3);
+
+TInfractions nextQ1(Query1ADT query1);
+TListAgency nextQ2(Query2ADT query2);
+TInfractions3 nextQ3(Query3ADT query3);
 
 #endif

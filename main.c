@@ -22,7 +22,6 @@
 #define FORMAT_ERROR 1
 #define OPENING_FILE_ERROR 4
 #define ESCAPE_N "\n"
-#define WRITETEXT "wt"
 
 void readInfractionsFile(char const argv[], Query1ADT query1);
 void readTicketsFile(char const argv[], Query1ADT query1,Query2ADT query2,Query3ADT query3);
@@ -38,19 +37,26 @@ int main(int argc, char const *argv[]){
         exit(FORMAT_ERROR);
     }
 
+    int c, flag = 0;
+    
     // [1st] Create CDTs
     Query1ADT query1 = newQuery1();
     Query2ADT query2 = newQuery2();
     Query3ADT query3 = newQuery3();
 
     // [2nd] Read files
-    readInfractionsFile(argv[INFRACTIONS_FILE], query1);
+    readInfractionsFile(argv[INFRACTIONS_FILE],query1);
     createVec3(query1,query3);
-    readTicketsFile(argv[TICKETS_FILE], query1,query2,query3);
+    readTicketsFile(argv[TICKETS_FILE],query1,query2,query3);
     
     // [3rd] Sort infractions
-    //sortInfractionsDecreasing(query1);
-    //printInfractions(query1);
+    ricardoSortQuery1(query1);
+    c = ricardoSortQuery3(query3);
+    // printInfractions(query1);
+
+    toBeginQ1(query1);
+    toBeginQ2(query2);
+    toBeginQ3(query3);
 
     // printInfractions2(query1,query2);
 
@@ -58,8 +64,7 @@ int main(int argc, char const *argv[]){
     // FILE * fileQ1 = newFile("query1.csv");
     // writeQ1File(fileQ1,query1);
     
-    int c = sortInfractionsDecreasingQuery3(query3);
-    printForQuery3(query3,c);
+    // printForQuery3(query3,c);
 
     //Free resources
     freeQ3(query3);
@@ -170,7 +175,7 @@ void readTicketsFile(char const * argv, Query1ADT query1,Query2ADT query2, Query
         //insert data into the CDT
         addInfractionsOcurrences(query1, atoi(id));
         addInfraction3(query1,query3, atoi(id),plate);
-        //addAgency(query1,query2,agency,atoi(id));
+        addAgency(query1,query2,agency,atoi(id));
 
         lineCounter++;
     }
