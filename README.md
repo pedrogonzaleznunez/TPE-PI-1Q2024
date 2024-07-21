@@ -1,5 +1,5 @@
 
-# TPE-PI-1Q2024 <a href="https://github.com/simple-icons/simple-icons/actions?query=workflow%3AVerify+branch%3Adevelop"><img src="https://img.shields.io/github/actions/workflow/status/simple-icons/simple-icons/verify.yml?branch=develop&logo=github&label=tests" alt="Build status"/></a>
+# TPE-PI-1Q2024 
 
 ## Brief:
 The main objective of this work is to capture everything learned in the subject "Imperative Programming", from variables and strings, to complex data structures. This system is responsible for collecting and organizing data on traffic violations in the cities of NYC and CHI.
